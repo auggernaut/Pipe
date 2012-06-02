@@ -82,7 +82,7 @@ app.get('/users', function (req, res) {
 
 app.get('/', function(req, res) {
    res.writeHead(200, {"Content-Type": "text/html"});
-   res.write("");
+   res.write('<div rel="OPKQI452" class="lrdiscoverwidget" data-logo="on" data-background="on" data-share-url="www.getpiped.com" data-css=""></div><script type="text/javascript" src="http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js"></script>;');
    res.end();
    /*
    var i;
