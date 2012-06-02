@@ -9,6 +9,7 @@ var FastLegS = require('FastLegS');
 var app = express.createServer();
 var dbconn = {};
 require('./config/environment.js')(app, dbconn, express);
+FastLegS.connect({ user: dbconn.user, password: dbconn.password, database: dbconn.name, host: dbconn.host, port: dbconn.port});
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
 
@@ -69,6 +70,10 @@ app.get('/users', function (req, res) {
 });
 
 app.get('/', function(req, res) {
+   res.writeHead(200, {"Content-Type": "text/html"});
+   res.write("");
+   res.end();
+   /*
    var i;
    var services = [];
 
@@ -84,7 +89,7 @@ app.get('/', function(req, res) {
    res.render('index', {
       services: services,
       session: req.session
-   });
+   });*/
 });
 
 app.get('/callback', function(req, res) {

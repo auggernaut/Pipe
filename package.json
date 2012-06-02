@@ -9,7 +9,7 @@
       "request": "*",
       "sprintf": "*",
       "pg": "0.6.x",
-      "ormnomnom": "*"
+      "FastLegS": "*"
    },
    "engines": {
      "node": "0.6.x"
