@@ -59,6 +59,17 @@ function getLink(prettyName, profiles, token) {
       prettyName);
 }
 
+var User = FastLegS.Base.extend({
+  tableName: 'users',
+  primaryKey: 'id',
+  _fields: {
+    { 'column_name': 'id' },
+    { 'column_name': 'name' },
+    { 'column_name': 'email' },
+    { 'column_name': 'password' }
+  }
+});
+
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');
 
