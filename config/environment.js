@@ -38,11 +38,11 @@ module.exports = function(app, dbconn, express) {
      var database_url = process.env.SHARED_DATABASE_URL;
      database_url = database_url.split('postgres://');
      var result = database_url[1].split(':');
-     db.user = result[0];
+     dbconn.user = result[0];
      result = result[1].split('@');
-     db.password = result[0];
+     dbconn.password = result[0];
      result = result[1].split('/');
-     db.host = result[0];
-     db.name = result[1];
+     dbconn.host = result[0];
+     dbconn.name = result[1];
   });
 };
