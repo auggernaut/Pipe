@@ -44,5 +44,6 @@ module.exports = function(app, dbconn, express) {
      result = result[1].split('/');
      dbconn.host = result[0];
      dbconn.name = result[1];
+     dbconn.port = 5432;
   });
 };
