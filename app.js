@@ -10,10 +10,10 @@ var app = express.createServer();
 var dbconn = {};
 require('./config/environment.js')(app, dbconn, express);
 console.log(sprintf("Database connecting: Host: %s:%d, DB: %s, User: %s", dbconn.host, dbconn.port, dbconn.name, dbconn.user));
-var sequelize = new Sequelize(dbconn.name, dbconn.user, dbconn.password, {
+/*var sequelize = new Sequelize(dbconn.name, dbconn.user, dbconn.password, {
                              host: dbconn.host,
                              port: dbconn.port,
-                             dialect: 'postgres'});
+                             dialect: 'postgres'});*/
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
 
@@ -64,7 +64,7 @@ function getLink(prettyName, profiles, token) {
 }
 
 // Node models for the backend
-var User = sequelize.define('User', {
+/*var User = sequelize.define('User', {
   name: Sequelize.STRING,
 },{
   paranoid: true
@@ -81,7 +81,7 @@ sequelize.sync().success(function() {
 }).error(function(error) {
   console.log("Unable to sync models and tables:");
   console.log(error);
-});
+});*/
 
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');
