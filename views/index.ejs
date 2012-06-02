@@ -1,0 +1,79 @@
+
+<div id="app">
+<script type="text/x-handlebars" data-template-name="auth" id="auth">
+	<p>Register with one or more of these services:</p>
+	<ul>
+		<% for (var i = 0; i < services.length; i++) { %>
+	 		<li id="<%= services[i].name %>"><%- services[i].link %></li>
+		<% } %>
+	</ul>
+	<div id="empowered">
+		<a href="http://singly.com/"><img src="/empowered.png" /></a>
+	</div>
+
+	{{#view App.AuthView}}
+		{{#with me}}
+			<p>Access Token: <input type="text" {{bindAttr value="accessToken"}} />
+			</p>
+		{{/with}}
+	
+		<a href="#" {{action "acceptAuth"}} class="btn"><strong>Start</strong></a>
+
+		<div id="authMessage">Please authenticate with a service provider.</div>
+	{{/view}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="pipe" id="pipe">
+	<h1>The Pipe</h1>
+	{{#view App.PipeView classNames="pipe"}}
+		{{#each pipe}}
+			{{#view App.SliceView contentBinding="this" classNames="slice"}}
+				<span class="sliceDetails">{{content.name}} - {{content.photo}}<a href="#" {{action "viewDetails"}} class="moreLink"><strong>Details</strong></a>
+				</span>
+				<span class="sliceActivity">{{content.lastActivity}} - <a href="#" {{action "viewActivity"}} class="moreLink"><strong>Activity</strong></a>
+				</span>
+				<span class="sliceNotes">{{content.lastNote}}
+					- <a href="#" {{action "viewNotes"}} class="moreLink"><strong>Notes</strong></a></span>
+			{{/view}}
+		{{/each}}
+	{{/view}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="details" id="details">
+	<h1>Details</h1>
+	{{#view App.DetailsView}}
+      <ul>
+          <li>
+            <a href="#" class="fullName"><strong>{{details.fullName}}</strong></a> : {{details.id}}   
+          </li>   
+        </ul>
+    {{/view}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="activity" id="activity">
+	<h2>Activity</h2>
+	{{#view App.ActivityView}}
+		 <ul>
+		 {{#each activity}}
+		 	<li>
+		 		{{text}}
+		 	</li>
+		 {{/each}}
+		 </ul>
+	{{/view}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="notes" id="notes">
+	<h2>Notes</h2>
+	{{#view App.NotesView}}
+		 <ul>
+		 {{#each notes}}
+		 	<li>
+		 		{{date}} : {{text}}
+		 	</li>
+		 {{/each}}
+		 </ul>
+	{{/view}}
+</script>
+</div>	
+
