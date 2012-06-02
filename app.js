@@ -3,17 +3,12 @@ var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
 var OAuth2 = require('oauth').OAuth2;
-var Sequelize = require('sequelize');
+var FastLegS = require('FastLegS');
 
 // Create an HTTP server
 var app = express.createServer();
 var dbconn = {};
 require('./config/environment.js')(app, dbconn, express);
-console.log(sprintf("Database connecting: Host: %s:%d, DB: %s, User: %s", dbconn.host, dbconn.port, dbconn.name, dbconn.user));
-var sequelize = new Sequelize(dbconn.name, dbconn.user, dbconn.password, {
-                             host: dbconn.host,
-                             port: dbconn.port,
-                             dialect: 'postgres'});
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
 
@@ -62,26 +57,6 @@ function getLink(prettyName, profiles, token) {
       queryString,
       prettyName);
 }
-
-// Node models for the backend
-var User = sequelize.define('User', {
-  name: Sequelize.STRING,
-},{
-  paranoid: true
-});
-
-var Note = sequelize.define('Note', {
-  content: Sequelize.TEXT,
-},{
-  paranoid: true
-});
-
-sequelize.sync().success(function() {
-  console.log("Successfully sync'd models and tables.");
-}).error(function(error) {
-  console.log("Unable to sync models and tables:");
-  console.log(error);
-});
 
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');

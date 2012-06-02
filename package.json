@@ -9,7 +9,7 @@
       "request": "*",
       "sprintf": "*",
       "pg": "0.6.x",
-      "sequelize": "1.3.x"
+      "ormnomnom": "*"
    },
    "engines": {
      "node": "0.6.x"
