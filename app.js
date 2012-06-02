@@ -62,12 +62,12 @@ function getLink(prettyName, profiles, token) {
 var User = FastLegS.Base.extend({
   tableName: 'users',
   primaryKey: 'id',
-  _fields: {
+  _fields: [
     { 'column_name': 'id' },
     { 'column_name': 'name' },
     { 'column_name': 'email' },
     { 'column_name': 'password' }
-  }
+  ]
 });
 
 // Use ejs instead of jade because HTML is easy
@@ -82,7 +82,7 @@ app.get('/users', function (req, res) {
 
 app.get('/', function(req, res) {
    res.writeHead(200, {"Content-Type": "text/html"});
-   res.write('<div rel="OPKQI452" class="lrdiscoverwidget" data-logo="on" data-background="on" data-share-url="www.getpiped.com" data-css=""></div><script type="text/javascript" src="http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js"></script>;');
+   res.write('<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel="OPKQI452" class="lrdiscoverwidget" data-logo="on" data-background="on" data-share-url="www.getpiped.com" data-css=""></div><script type="text/javascript" src="http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js"></script></body></html>;');
    res.end();
    /*
    var i;
