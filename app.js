@@ -29,13 +29,13 @@ var clientSecret = process.argv[3] || '67dd7798cced0614ba88ebad7386f6b4';
 
 var usedServices = [
    'Facebook',
-   'foursquare',
-   'Instagram',
-   'Tumblr',
+   //'foursquare',
+   //'Instagram',
+   //'Tumblr',
    'Twitter',
    'LinkedIn',
-   'FitBit',
-   'Email'
+   //'FitBit',
+   'GContacts'
 ];
 
 var oa = new OAuth2(clientId, clientSecret, apiBaseUrl);
@@ -54,7 +54,7 @@ function getLink(prettyName, profiles, token) {
    // If the user has a profile authorized for this service
    if (profiles && profiles[service] !== undefined) {
       // Return a unicode checkmark so that the user doesn't try to authorize it again
-      return sprintf('<span class="check">&#10003;</span> <a href="%s/services/%s?access_token=%s">%s</a>', apiBaseUrl, service, token, prettyName);
+      return sprintf('<a href="%s/services/%s?access_token=%s" class="activated"><img style="margin-right:10px;" src="img/social_networks/%s_blue.png" alt="Pipe" width="46" height="46" /></a>', apiBaseUrl, service, token, prettyName);
    }
 
    // This flow is documented here: http://dev.singly.com/authorization
@@ -64,7 +64,7 @@ function getLink(prettyName, profiles, token) {
       service: service
    });
 
-   return sprintf('<a href="%s/oauth/authorize?%s">%s</a>',
+   return sprintf('<a href="%s/oauth/authorize?%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
       apiBaseUrl,
       queryString,
       prettyName);
@@ -83,75 +83,116 @@ app.get('/user', function (req, res) {
 
 app.get('/friend', function(req, res) {
 
-   getProtectedResource('/types/statuses_feed', req.session, function(err, statuses){
+   getProtectedResource('/services/linkedin/connections', req.session, function(err, lin){
       //console.log(statuses); 
       
-      var rStatus = JSON.parse(statuses)[Math.floor(Math.random()*20)];
-      console.log(rStatus.idr);  
+      var a = [];
+      var c = JSON.parse(lin);
 
-      /***** TODO *******/
-      // GET DETAILS OF FRIEND FROM ALL SERVICES
+      var linContact = a[0] = c[Math.floor(Math.random()*c.length)];
+      
+      var name =  linContact.data.firstName + "%20" + linContact.data.lastName;
+      
+      getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
+   
+         var cc = JSON.parse(contacts);
+         console.log("---" + cc.length);
+         if(cc.length > 1) {
 
-      if(rStatus.idr.indexOf("twitter") != -1)
-      //is a twitter status
-      {
-         //Get twitter user details
-         getProtectedResource('/by/contact/twitter/' + rStatus.data.user.screen_name, req.session, function(err, item) {
+            for(var i = 0; i < cc.length; i++){
+               if(cc[i].idr.indexOf("twitter") != -1){
+                  a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session); 
+                  
+               }
+               else if(cc[i].idr.indexOf("facebook") != -1){
+                  a[2] = getFacebookUser(cc[i].data.id, req.session);
+                  found = true;
+               }
+               else if(cc[i].idr.indexOf("gcontacts") != -1)
+                  a[3] = cc[i].data.gd$email && cc[i].data.gd$email[0].address;
+
+               //console.log(a[a.length]);
+            }
             
-            var contact = JSON.parse(item)[0]; 
-            console.log(contact);
-            var person = { 
-               "id" : contact.idr,
-               "name" : contact.data.name,
-               "username" : contact.data.screen_name,
-               "description" : contact.data.description,
-               "location" : contact.data.location,
-               "status" : contact.data.status.text,
-               "photo" : contact.data.profile_image_url }
             
-            console.log(person);
+         }
 
-            res.write(JSON.stringify(person));
-            res.end();
+         res.write(JSON.stringify(a));
+         res.end(); 
 
-         });
+      });
 
-         //Search contacts for other accounts -- TODO
-         //singly.get('/types/contacts?q=' + rStatus.data.name, null, function(item){
-         //   console.log(item);
-         //});
-
-      }
-      else if(rStatus.idr.indexOf("facebook") != -1)
-      //is a facebook status
-      {
-         //Get facebook user details
-         getProtectedResource('/by/contact/facebook/' + rStatus.data.from.id, req.session, function(err, item) {
-            console.log(item); 
-            var contact = JSON.parse(item)[0]; 
-            
-            var person = { 
-               "id" : contact.idr,
-               "name" : contact.data.name,
-               "username" : contact.data.username,
-               "description" : (contact.data.bio) ? contact.data.bio : contact.data.quotes,
-               "location" : contact.data.location.name,
-               "status" : (rStatus.data.message) ? rStatus.data.message : rStatus.data.story,
-               "photo" : contact.oembed.thumbnail_url,
-               "profession" : contact.data.work && contact.data.work[0].employer.name }
-            
-            console.log(person);
-
-            res.write(JSON.stringify(person));
-            res.end();
-
-         });               
-        
-      }
+      //console.log(a);
+      
    });
    
 });
 
+function getTwitterUser(screen_name, session){
+
+   //Get twitter user details
+   getProtectedResource('/by/contact/twitter/' + screen_name, session, function(err, item) {
+      var contact = JSON.parse(item)[0]; 
+      
+      var person = { 
+         "id" : contact.idr,
+         "name" : contact.data.name,
+         "username" : contact.data.screen_name,
+         "description" : contact.data.description,
+         "location" : contact.data.location,
+         "status" : contact.data.status.text,
+         "photo" : contact.data.profile_image_url };
+
+      console.log(person);
+      
+      return person;
+   });
+}
+
+
+function getFacebookUser(id, session){
+   //Get facebook user details
+   getProtectedResource('/by/contact/facebook/' + id, session, function(err, item) {
+      var contact = JSON.parse(item)[0]; 
+      
+      var person = { 
+         "id" : contact.idr,
+         "name" : contact.data.name,
+         "username" : contact.data.username,
+         "description" : (contact.data.bio) ? contact.data.bio : contact.data.quotes,
+         "location" : contact.data.location && contact.data.location.name,
+         //"status" : (rStatus.data.message) ? rStatus.data.message : rStatus.data.story,
+         "photo" : contact.oembed.thumbnail_url,
+         "profession" : contact.data.work && contact.data.work[0].employer.name };
+      
+      console.log(person);
+
+      return person;
+      
+   });
+}
+
+/*
+function getGoogleUser(id){
+   getProtectedResource('/by/contact/gcontacts/' + id, req.session, function(err, item) {
+      var contact = JSON.parse(item)[0]; 
+      //console.log("google: " + contact); 
+      var person = { 
+         "id" : contact.idr,
+         "name" : contact.data.name,
+         "username" : contact.data.username,
+         "description" : (contact.data.bio) ? contact.data.bio : contact.data.quotes,
+         "location" : contact.data.location && contact.data.location.name,
+         "status" : (rStatus.data.message) ? rStatus.data.message : rStatus.data.story,
+         "photo" : contact.oembed.thumbnail_url,
+         "profession" : contact.data.work && contact.data.work[0].employer.name };
+      
+      return person;
+      
+   });
+
+}
+*/
 
 app.get('/', function(req, res) {
    res.render('splash', {session: req.session});
@@ -211,7 +252,7 @@ app.get('/callback', function(req, res) {
 
          req.session.profiles = profilesBody;
 
-         res.redirect('/pipe');
+         res.redirect('/auth');
       });
    });
 });

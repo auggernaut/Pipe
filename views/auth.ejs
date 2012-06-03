@@ -1,31 +1,17 @@
-<script type="text/javascript">
-		if (accessToken === 'undefined' ||
-            accessToken === undefined) {
-            $('#authMessage').css('display', 'block');
-        	$('#startApp').css('enabled', 'false');
-         }
-         else
-         {
-         	$('#authMessage').css('display', 'none');
-        	$('#startApp').css('enabled', 'true');
-         }
-</script>
 
-<div id="auth">
-	<p>Register with one or more of these services:</p>
-	<ul>
-		<% for (var i = 0; i < services.length; i++) { %>
-	 		<li id="<%= services[i].name %>"><%- services[i].link %></li>
-		<% } %>
-	</ul>
-	<div id="empowered">
-		<a href="http://singly.com/"><img src="/empowered.png" /></a>
-	</div>
+    <div class="container">
+       	<img style="padding-top:10px;" src="img/index_logo.png" alt="Pipe" width="260" height="120" /><br />
+		  <p style="padding-bottom:15px;">First you need to connect up some accounts to Pipe so we can pull in your contacts:</p>
+		  <div id="authOptions">	
+		  	<% for (var i = 0; i < services.length; i++) { %>
+	 			<%- services[i].link %>
+			<% } %>
+		  </div>
 
-			<p>Access Token: <%= session.access_token %>
-			</p>
-	
-		<a href="/pipe" id="startApp"><strong>Start</strong></a>
-
-		<div id="authMessage">Please authenticate with a service provider.</div>
-</div>
+		  <p style="padding-bottom:15px;">Every day we'll notify you of the one contact you should reach out to.</p>
+		  <a href="/pipe" class="btn btn-large btn-success" style="font-size:18px; margin-bottom:30px">Ok, I'm done! &nbsp;&nbsp;<i class="icon-share-alt icon-white"></i></a>
+    </div>
+    
+    <!-- Le Footer javascript -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>

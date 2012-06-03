@@ -6,22 +6,40 @@
 <div id="app">
 <script type="text/x-handlebars" data-template-name="friend" id="friend">
 	{{#view App.FriendView}}
-		<div id="name">{{friend.fullName}}</div>
-		<div id="notes">{{friend.notes}}</div>
-		<div id="activity">{{friend.activity}}</div>
-		<div id="location">{{friend.location}}</div>
-		<div id="description">{{friend.description}}
-		<div id="profession">{{friend.profession}}</div>
-		<img {{bindAttr src="friend.photo"}} />
-		<span id="connect"><a href="#" {{action "connect"}} class="connectBtn">Connect</a>
-		<span id="skip"><a href="#" {{action "skip"}} class="skipBtn">Skip</a>
+	<div class="container">
+		<h1 id="name">{{friend.fullName}}</h1>
+    	<div class="divider"></div>
+    	
+    	<div id="imagecontainer">
+    		<img {{bindAttr src="friend.photo"}} />
+	    	<div id="imageoverlay">
+	    		<div id="arrowright"></div>
+	    		<div id="addanote">{{friend.description}}</div>
+	    	</div>
+    	</div>
+
+		<div class="feed-item">
+    		<div id="notes">{{friend.notes}}</div>
+			<div id="activity">{{friend.activity}}</div>
+			<div id="location">{{friend.location}}</div>
+			<div id="description">{{friend.description}}</div>
+			<div id="profession">{{friend.profession}}</div>
+			
+			<div id="services">{{friend.services.one}}{{friend.services.two}}{{friend.services.three}}{{friend.services.four}}</div>
+			<span id="connect"><a href="#" {{action "connect"}} class="connectBtn">Connect</a>
+			<span id="skip"><a href="#" {{action "skip"}} class="skipBtn">Skip</a>
+			</div>
+    	</div>
+		
     {{/view}}
 </script>
 
 <script type="text/x-handlebars" data-template-name="connect" id="connect">	
-	<h2>Connect</h2>
 	{{#view App.ConnectView}}
-		 {{services}}
+	<div class="container">
+		<h1 id="name">Contact: <br/>{{friend.fullName}}</h1>
+		 <div id="services">{{friend.services.one}}{{friend.services.two}}{{friend.services.three}}{{friend.services.four}}</div>
+	</div>
 	{{/view}}
 </script>
 
