@@ -66,20 +66,61 @@
 
 <script type="text/x-handlebars" data-template-name="connect" id="connect">	
 	{{#view App.ConnectView}}
-	<div class="container">
-		<h1 id="name">Contact: <br/>{{friend.fullName}}</h1>
-		<div id="services">
-			<a href="#" {{action "selectOne"}} {{bindAttr id="friend.services.one"}}>{{friend.services.one}}</a>
-			<a href="#" {{action "selectTwo"}} {{bindAttr id="friend.services.two"}}>{{friend.services.two}}</a>
-			<a href="#" {{action "selectThree"}} {{bindAttr id="friend.services.three"}}>{{friend.services.three}}</a>
-			<a href="#" {{action "selectFour"}} {{bindAttr id="friend.services.four"}}>{{friend.services.four}}</a>
-		</div>
-		<div>
-		<input type="text" id="subject" style="display:none" />
-		</div>
-		<div>
-		<textarea id="messageText" rows="6" cols="50"/></div>
-		<span id="message"><a href="#" {{action "send"}} class="messageBtn">Send</a>		 
+<div class="container">
+<h1 id="name">{{friend.fullName}}</h1>
+    		<div id="sendsocialnetworks">
+    			<a href="#" {{action "selectMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
+    			<a href="#" {{action "selectLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png"width="46" heigh="46" /></a>
+    			<a href="#" {{action "selectTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
+    			</a>
+    		</div>
+	<form id="contact">
+    		<textarea id="messageText">Enter a message here ...</textarea>
+    	
+    	<div id="sendvia">
+    		<div id="sendviatext">
+    		<a href="#" {{action "send"}}>Send message!</a>
+    		</div>
+    	</div>
+	    	<div style="clear:both"></div>	
+    	</form>
+    	<div id="info">
+	    	<div id="about">
+	    		<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.description}}
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div style="clear:both"></div>
+	    	<div id="divider"></div>
+	    	
+	    	<div id="work">
+	    		<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.profession}}
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div style="clear:both"></div>
+	    	<div id="divider"></div>
+	    	
+	    	<div id="live">
+	    		<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.location}}
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div style="clear:both"></div>
+	    	<div id="divider"></div>
+    	</div>  
 	</div>
 	{{/view}}
 </script>

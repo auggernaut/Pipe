@@ -53,7 +53,7 @@ function getLink(prettyName, profiles, token) {
       service: service
    });
 
-   return sprintf('<a href="%s/oauth/authorize?%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
+   return sprintf('<a href="%s/oauth/authorize?flag=dm&%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
       apiBaseUrl,
       queryString,
       prettyName.toLowerCase());
@@ -63,6 +63,7 @@ function getTwitterUser(screen_name, session, res){
 
    //Get twitter user details
    getProtectedResource('/by/contact/twitter/' + screen_name, session, function(err, item) {
+      console.log("HERE GOT: %s", item);
       var contact = JSON.parse(item)[0]; 
       
       var person = { 
@@ -71,10 +72,10 @@ function getTwitterUser(screen_name, session, res){
          "username" : contact.data.screen_name,
          "description" : contact.data.description,
          "location" : contact.data.location,
-         "status" : contact.data.status.text,
+         "status" : contact.data.status && contact.data.status.text,
          "photo" : contact.data.profile_image_url };
 
-      console.log(person);
+      console.log("twitter - " + JSON.stringify(person));
       
       res.write(JSON.stringify(person));
       res.end();
@@ -87,7 +88,7 @@ function getFacebookUser(id, session, res){
    getProtectedResource('/by/contact/facebook/' + id, session, function(err, item) {
       var contact = JSON.parse(item)[0]; 
       
-      person = { 
+      var person = { 
          "id" : contact.idr,
          "name" : contact.data.name,
          "username" : contact.data.username,
@@ -97,7 +98,7 @@ function getFacebookUser(id, session, res){
          "photo" : contact.oembed.thumbnail_url,
          "profession" : contact.data.work && contact.data.work[0].employer.name };
       
-      console.log(person);
+      console.log("facebook --" + person);
 
       res.write(JSON.stringify(person));
       res.end();
@@ -116,7 +117,7 @@ function getAccountIds(contacts)
    if(contacts.length > 1) {
       for(var i = 0; i < contacts.length; i++){
          if(contacts[i].idr.indexOf("twitter") != -1){
-            pTwitter = contacts[i].data.user.screen_name;
+            pTwitter = contacts[i].data.screen_name;
          }
          else if(contacts[i].idr.indexOf("facebook") != -1){
             pFacebook = contacts[i].data.id
@@ -174,7 +175,7 @@ app.get('/findFriends', function(req, res) {
          req.session.pIndex = req.session.pIndex + 1;
       */
 
-      var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
+      var myFriends = ["lQEya8Lw1c", "QlNyTOIv-M"];
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
          if (lin === undefined) {
@@ -189,6 +190,7 @@ app.get('/findFriends', function(req, res) {
          var name =  pLinkedIn.data.firstName + "%20" + pLinkedIn.data.lastName;
          
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
+            console.log(contacts);
             var ids = getAccountIds(JSON.parse(contacts));  
             ids[0] = pLinkedIn;          
             res.write(JSON.stringify(ids));
@@ -199,7 +201,7 @@ app.get('/findFriends', function(req, res) {
    }
    else
    {
-      getProtectedResource('/services/linkedin/connections', req.session, function(err, lin){
+      getProtectedResource('/services/linkedin/connections?offset='+c[Math.floor(Math.random()*c.length)], req.session, function(err, lin){
          //console.log(statuses); 
          
          var a = [];
