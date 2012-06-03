@@ -15,23 +15,52 @@
     		<img {{bindAttr src="friend.photo"}} />
 	    	<div id="imageoverlay">
 	    		<div id="arrowright"></div>
-	    		<div id="addanote">{{friend.description}}</div>
+	    		<div id="addanote">{{friend.tagline}}</div>
 	    	</div>
     	</div>
-
-		<div class="feed-item">
-    		<div id="notes">{{friend.notes}}</div>
-			<div id="activity">{{friend.activity}}</div>
-			<div id="location">{{friend.location}}</div>
-			<div id="description">{{friend.description}}</div>
-			<div id="profession">{{friend.profession}}</div>
-			
-			<div id="services">{{friend.services.one}}{{friend.services.two}}{{friend.services.three}}{{friend.services.four}}</div>
-			<span id="connect"><a href="#" {{action "connect"}} class="connectBtn">Connect</a>
-			<span id="skip"><a href="#" {{action "skip"}} class="skipBtn">Skip</a>
-			</div>
+    	<div id="connectorskip">
+    		<a href="#" {{action "connect"}}><img id="connect" src="img/connect_btn.jpg" width="231px" height="44px"/></a>
+    		<a href="#" {{action "skip"}}>
+    		<img id="skip" src="img/skip_btn.jpg" width="64px" height="44px" /></a>
     	</div>
-		
+		<div id="info">
+	    	<div id="about">
+	    		<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.description}}
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div style="clear:both"></div>
+	    	<div id="divider"></div>
+	    	
+	    	
+	    	<div id="work">
+	    		<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.profession}}
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div style="clear:both"></div>
+	    	<div id="divider"></div>
+	    	
+	    	<div id="live">
+	    		<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.location}}
+		    		</div>
+	    		</div>
+	    	</div>
+	    	<div style="clear:both"></div>
+	    	<div id="divider"></div>
+    	</div>   
     {{/view}}
 </script>
 
