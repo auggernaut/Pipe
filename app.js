@@ -175,7 +175,7 @@ app.get('/findFriends', function(req, res) {
          req.session.pIndex = req.session.pIndex + 1;
       */
 
-      var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
+      var myFriends = ["lQEya8Lw1c", "QlNyTOIv-M"];
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
          if (lin === undefined) {
@@ -201,7 +201,7 @@ app.get('/findFriends', function(req, res) {
    }
    else
    {
-      getProtectedResource('/services/linkedin/connections', req.session, function(err, lin){
+      getProtectedResource('/services/linkedin/connections?offset='+c[Math.floor(Math.random()*c.length)], req.session, function(err, lin){
          //console.log(statuses); 
          
          var a = [];
@@ -248,8 +248,8 @@ app.get('/getFriend', function(req, res) {
 app.get('/', function(req, res) {
    if (process.env.PRELAUNCH) {
       res.writeHead(200, {"Content-Type": "Text/Html"});
-      res.write("<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel=\"OPKQI452\" class=\"lrdiscoverwidget\" data-logo=\"on\" data-background=\"on\" data-share-url=\"www.pipeapp.co\" data-css=\"\"></div><script type=\"text/javascript\" src=\"http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js\"></script></body></html>;");
-      res.write("<script type=\"text/javascript\">" +
+      res.write("<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel=\"OPKQI452\" class=\"lrdiscoverwidget\" data-logo=\"on\" data-background=\"on\" data-share-url=\"www.pipeapp.co\" data-css=\"\"></div><script type=\"text/javascript\" src=\"http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js\"></script>;");
+      res.write("<footer><script type=\"text/javascript\">" +
 
          "var _gaq = _gaq || [];" +
          "_gaq.push(['_setAccount', 'UA-32357176-1']);" +
@@ -261,7 +261,7 @@ app.get('/', function(req, res) {
          "   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);" +
          "})();" +
 
-         "</script>");
+         "</script></footer></body></html>");
       res.end();
       return;
    } else {

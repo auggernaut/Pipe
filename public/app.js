@@ -69,14 +69,16 @@ $(function() {
       friendBinding : 'App.friendController.content',
       servicesBinding : 'App.friendController.services',
       send : function(evt) {
-
+         switch (App.friendController.get("connectVia")) {
+            case "twitter":
+               sendLinkedIn(evt);
+               break;
+         }
       },
       sendMail : function(evt) {
          //App.activityController.set('friendId', this.get('content').id);
          App.friendController.set("alert", this.get('friend').services['linkedin']);
          App.stateManager.goToState('friendView');
-         
-
       },
       sendLinkedIn : function(evt){
          singly.post('/proxy/linkedin/people/~/mailbox', {
@@ -106,13 +108,13 @@ $(function() {
             });
       },
       selectMail : function(evt) {
-
+         App.friendController.set("connectVia", "mail");
       },
       selectLinkedIn : function(evt) {
-
+         App.friendController.set("connectVia", "linkedin");
       },
       selectTwitter : function(evt) {
-
+         App.friendController.set("connectVia", "twitter");
       }
    });
 
