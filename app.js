@@ -63,10 +63,11 @@ function getLink(prettyName, profiles, token) {
 var Schema = mongoose.Schema,
   ObjectId = Schema.ObjectId;
 
-var User = new Schema({
+var UserSchema = new Schema({
+  username          : { type: String, require: true, index: {unique: true}},
   name              : { type: String, require: true },
   password          : { type: String, require: true },
-  email             : { type: String, require: true },
+  email             : { type: String, require: true, index: {unique: true}},
   email_confirmed   : { type: Boolean, require: true, default: false },
   created_at        : { type: Date, default: Date.now },
   modified_at       : { type: Date, default: Date.now },
@@ -74,12 +75,13 @@ var User = new Schema({
   last_login        : { type: Date, default: null }
 });
 
-User.pre('save', function(next) {
+UserSchema.pre('save', function(next) {
   this.set('modified_at', Date.now);
   next();
 });
 
-mongoose.model('User', User);
+mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);
 
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');
@@ -109,9 +111,23 @@ app.get('/', function(req, res) {
   }
 });
 
+app.get('/signup', function(req, res) {
+});
+
 app.post('/signup', function(req, res) {
+  res.writeHead(200, {"Content-Type": "Text/Html"});
   var user = new User(req.body);
-  user.save();
+  user.save(function(err) {
+    if (err !== null) {
+      console.log(typeof err);
+      console.log(err);
+      res.write(JSON.stringify({"error": "There was an error in processing the user."}));
+      res.end();
+    } else {
+      res.write(JSON.stringify({"success": "Success!"}));
+      res.end();
+    }
+  });
 });
 
 app.get('/callback', function(req, res) {
