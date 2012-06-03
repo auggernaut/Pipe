@@ -85,11 +85,20 @@ $(function() {
                "subject": "Hi Bob",
                "body": "Would love to catch up again."
             }, function(data, textStatus, jqXHR) {
-               console.log(data);
-               console.log(textStatus);
                App.friendController.set("alert", "Message Sent!");
                App.stateManager.goToState('friendView');
-            })
+            });
+         }
+
+         if (App.friendController.connectVia == "twitter")
+         {
+            singly.post('/twitter/direct_messages/new.format', {
+               "screen_name": "surgemd",
+               "text": "Test message"
+            }, function(data, textStatus, jqXHR) {
+               App.friendController.set("alert", "Message sent!");
+               App.stateManager.goToState('friendView');
+            });
          }
 
          //App.friendController.set("alert", "Message Sent!");
