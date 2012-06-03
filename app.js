@@ -148,7 +148,7 @@ app.get('/friend', function(req, res) {
       else
          req.session.pIndex = req.session.pIndex + 1;
       
-      var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
+      var myFriends = ["lQEya8Lw1c"];
 
       console.log(myFriends[req.session.pIndex]);
 
@@ -245,6 +245,12 @@ app.get('/', function(req, res) {
   */
 
 app.get('/', function(req, res){
+   if (process.env.PRELAUNCH) {
+      res.writeHead(200, {"Content-Type": "Text/Html"});
+      res.write("<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel=\"OPKQI452\" class=\"lrdiscoverwidget\" data-logo=\"on\" data-background=\"on\" data-share-url=\"www.getpiped.com\" data-css=\"\"></div><script type=\"text/javascript\" src=\"http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js\"></script></body></html>;");
+      res.end();
+      return;
+   }
    var i;
    var services = [];
 
