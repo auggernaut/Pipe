@@ -201,7 +201,7 @@ app.get('/findFriends', function(req, res) {
    }
    else
    {
-      getProtectedResource('/services/linkedin/connections?offset='+c[Math.floor(Math.random()*c.length)], req.session, function(err, lin){
+      getProtectedResource('/services/linkedin/connections?offset='+Math.floor(Math.random()), req.session, function(err, lin){
          //console.log(statuses); 
          
          var a = [];
