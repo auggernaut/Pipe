@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'KievitOT-ExtraLight';
-	src: local('☺'), url('../kievitotlight.ttf') format('truetype');
+	src: local('☺'), url('../kievitotextralight.ttf') format('truetype');
 }
 
       body {
@@ -18,6 +18,7 @@
       	margin:0 auto;
       	position: relative;
       	padding:0;
+      	min-height:417px;
       }
       body > div.container p { 
       	font-size:16px;
@@ -135,6 +136,24 @@
       height:100px;
       margin:5px 0 10px 0;
       }
+      div#radios {
+      	line-height:20px;
+      	padding-left:30px;
+      	font-size:16px;
+      	text-align: left;
+      	margin-bottom:25px;
+      	margin-top:15px;
+      }
+      
+      form#contact input[type="image"] {
+      	margin-top:5px;
+      }
+      
+      h1.back {
+        background: transparent url(../img/back_btn.png) no-repeat 15px 16px;
+    	-webkit-background-size: 35px 35px;
+      }
+      
       form#contact {
       }
       div#sendviatext {
@@ -150,104 +169,7 @@
       
       
       
-      /*
-      div#birds {
-        background: transparent url(.../img/home-mobile/large-flying-birds.png) right bottom no-repeat;
-      	min-height:416px;
-    	-webkit-background-size: 215px 140px;
-      }
-      div.feed-item {
-      	background: transparent url(../img/home-mobile/feed_item_bg.jpg) repeat;
-    	-webkit-background-size: 150px 150px;
-    	min-height:100px;
-    	margin-top:5px;
-    	margin-bottom:10px;
-      	-webkit-border-radius: 7px;
-      	border: 1px solid #fff;
-		border:1px rgba(130, 130, 130, 0.4) outset ;
-		width:100%;
-      	min-height:160px;
-      }*/
-      div.feedsub1 {
-      	width:99%;
-      	-webkit-border-radius: 6px;
-      	margin:0 auto;
-      	position:relative;
-      }
-      div.left {
-      	width:40%;
-      	padding-top:0px;
-      	min-height:160px;
-      	position: relative;
-      	float:left;
-      	height:100%;
-      }
-      div.postedby {
-      	font-size:15px;
-      	padding-bottom:10px;
-      	color:#000;
-      }
-      div.postedby img{
-      	position: relative; top: 10px;
-      	margin-right:4px;
-      }
-      div.postdetails {
-      	text-transform:uppercase;
-      	color: #666;
-      	position: absolute;
-      	top:45%;
-      	margin-top:-28px;
-      	left:20%;
-      	margin-left:-35px;
-      }
-      div.postdetails img{
-      padding-left:4px;
-      padding-top:4px;
-      }
-      div.right {
-      	float:right;
-      	width:58%;
-      	margin-right:3px;
-      	margin-top:7px;
-      }
-      div.caption {
-      	background: transparent url(../img/home-mobile/feed_quote_left.png) top left no-repeat;
-      	width:104%;
-    	-webkit-background-size: 10px 10px;
-    	position:relative;
-    	left:-5%;
-    	margin-top:10px;
-      }
-      div.caption_sub {
-      	background: transparent url(../img/home-mobile/feed_quote_right.png) bottom right no-repeat;
-    	-webkit-background-size: 10px 10px;
-    	padding:5px 7px 10px 7px;
-    	margin-bottom:10px;
-      }
-      
-      div.noimage {
-      	margin-top:30px;
-      	margin-bottom:30px;
-      }
-      
-      div.gagglelist a {
-      width:200px;
-      }
-      
-      div.gagglelist .btn-large [class^="icon-"] {
-      margin-top:3px;
-      }
-      
-      div.navbar-inner {
-      padding: 4px 5px 0px 5px; 
-      height:45px; 
-      border-radius:0px; 
-      background: transparent url('../img/home-mobile/header-cloth-bg.jpg') repeat-x; 
-      -webkit-background-size: 160px 55px;
-      }
-      div.navbar-inner div.container img {position:relative; top:5px}
-     
-      body.firstLogin {
+            body.firstLogin {
         /*background: transparent url('../img/home-mobile/birdy-bg.jpg') repeat;
 		-webkit-text-size-adjust: none;
     	-webkit-background-size: 150px 150px;*/
@@ -272,92 +194,106 @@
       body > div.container > div.gagglelist > p {
       	padding:5px 0;
       	}
-      div.feed-item {
-      	background: transparent url(img/home-mobile/feed_item_bg.jpg) repeat;
-    	-webkit-background-size: 150px 150px;
-    	min-height:100px;
-    	margin-top:5px;
-    	margin-bottom:10px;
-      	-webkit-border-radius: 7px;
-      	border: 1px solid #fff;
-		border:1px rgba(130, 130, 130, 0.4) outset ;
-		width:100%;
-      	min-height:160px;
-      }
-      div.feedsub1 {
-      	width:99%;
-      	-webkit-border-radius: 6px;
-      	margin:0 auto;
-      	position:relative;
-      }
-      div.left {
-      	width:40%;
-      	padding-top:0px;
-      	min-height:160px;
-      	position: relative;
-      	float:left;
-      	height:100%;
-      }
-      div.postedby {
-      	font-size:15px;
-      	padding-bottom:10px;
-      	color:#000;
-      }
-      div.postedby img{
-      	position: relative; top: 10px;
-      	margin-right:4px;
-      }
-      div.postdetails {
-      	text-transform:uppercase;
-      	color: #666;
-      	position: absolute;
-      	top:45%;
-      	margin-top:-28px;
-      	left:20%;
-      	margin-left:-35px;
-      }
-      div.postdetails img{
-      padding-left:4px;
-      padding-top:4px;
-      }
-      div.right {
-      	float:right;
-      	width:58%;
-      	margin-right:3px;
-      	margin-top:7px;
-      }
-      div.caption {
-      	background: transparent url(img/home-mobile/feed_quote_left.png) top left no-repeat;
-      	width:104%;
-    	-webkit-background-size: 10px 10px;
-    	position:relative;
-    	left:-5%;
-    	margin-top:10px;
-      }
-      div.caption_sub {
-      	background: transparent url(img/home-mobile/feed_quote_right.png) bottom right no-repeat;
-    	-webkit-background-size: 10px 10px;
-    	padding:5px 7px 10px 7px;
-    	margin-bottom:10px;
-		word-wrap:break-word;
-      }
+      	
+      .desktop {display: none;}
       
-      div.noimage {
-      	margin-top:30px;
-      	margin-bottom:30px;
-      }
-      div.modal-backdrop {
-      	top:-50px;
-      	left:-50px;
-      	width: 400px;
-      	height: 900px;
-      }
-	 div.navbar {
-	 margin-bottom:5px;
-	 }
-	 div.modal-body p.user {
-	 margin:0 0 3px;
-	 }
-	 p.inviteButton {
-	 text-align:center;
-	 }
+      img.startitup {padding-top:20px}
+      	
+    div#logo {
+    	width:260px;
+    	height:120px;
+    	background: transparent url(../img/index_logo.png) no-repeat center center;
+    	-webkit-background-size: 260px 120px;
+    	margin:0 auto;
+    	padding-top:20px;
+    	
+    }
+      	
+@media screen and (min-width:768px) {
+	
+	body.firstLogin { 
+	background: transparent url(../img/desktop/header_bg.jpg) repeat-x 0px -20px ;
+	}
+	
+	body.firstLogin div.container.home {
+	background: transparent url(../img/desktop/devices.jpg) no-repeat center 350px;
+	min-height:630px;
+	}
+	
+	
+	body.firstLogin div.container{
+	background:transparent;
+	min-height:630px;
+	}
+	
+	body.firstLogin div.container p {
+		width:500px;
+		font-size:24px;
+	}
+	
+	.nodesktop {
+	display:none;
+	}
+	
+	p#explanation.desktop {
+		width:540px;
+		margin-top:20px;
+		line-height: 34px;
+	}
+	
+	.desktop {
+	display:inherit;
+	}
+      
+    div#bigcircles {
+	background: transparent url(../img/home_circles.png) no-repeat center bottom;
+	height:180px;
+    }
+    
+    div#logo {
+    	width:260px;
+    	height:120px;
+    	background: transparent url(../img/desktop/pipe_trans.png) no-repeat center bottom;
+    	margin:0 auto;
+    	padding-top:20px;
+    	margin-bottom:10px;
+    }
+    
+    div#desktopcontainer {
+    	width:600px;
+    	margin:0 auto;
+    	
+    }
+    
+    a:hover {text-decoration:none;}
+    
+    h1#name {font-size:45px; padding-bottom:40px; padding-top:18px;}
+    
+    div#sendvia {
+    	margin: 0 auto;
+    	width:300px;
+    	padding-top:20px;
+    }
+    
+    div#radios { width:70%; margin: 30px auto;}
+    
+    form#contact textarea {height:200px}
+    
+    div#sendviatext {
+    	font-size:20px;
+    	
+    	padding-bottom:20px;
+    }
+    
+   div#about div#icon {-webkit-background-size: 42px 32px;height: 60px;width:55px; padding-top:20px;}
+   div#work div#icon {-webkit-background-size: 50px 50px; height: 70px;width:60px;}
+   div#live div#icon {-webkit-background-size: 50px 50px; height: 60px;width:60px; padding-left:3px;}
+   div#text {font-size:17px; line-height:25px; float:right; width:495px; padding-top:17px;}
+   div#live div#text {padding-top:15px}
+   div#about div#text {padding-top:20px}
+   div#text {}
+   body.firstLogin.feed {background-position-y: -90px}
+    
+      img.startitup {padding-top:5px}
+      
+}

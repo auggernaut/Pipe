@@ -158,7 +158,8 @@ $(function() {
                friend.set("fullName", details[0].data.firstName + " " + details[0].data.lastName);
                friend.set("description", (details[0].data.bio) ?  details[0].data.bio : details[0].data.headline);
                
-               friend.set("photo", details[0].data.pictureUrl);
+               //friend.set("photo", details[0].data.pictureUrl);
+               friend.set("photo", "/img/team/" + details[0].data.firstName+".jpg")
                friend.set("location", details[0].data.location.name);
                friend.set("profession", details[0].data.industry);
                
