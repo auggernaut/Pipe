@@ -57,6 +57,8 @@ $(function() {
       //notesBinding : 'App.notesController.content',
       connect : function(evt) {
          //App.friendController.set('content', this.get('content'));
+         if ($('#name').html().split('</script>')[1].split('<script')[0] == " ")
+            return;
          App.stateManager.goToState('connectView');
       },
       skip : function(evt) {
