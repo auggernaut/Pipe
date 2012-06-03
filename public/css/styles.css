@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'KievitOT-ExtraLight';
-	src: local('☺'), url('../kievitotextralight.ttf') format('truetype');
+	src: local('☺'), url('../kievitotlight.ttf') format('truetype');
 }
 
       body {
@@ -47,7 +47,6 @@
         border-radius:8px;
         height:165px;
         overflow:hidden;
-        background-color: red;
 
       }
       
@@ -55,6 +54,15 @@
 	    vertical-align: middle;
 	    width: 100%;
 	  }
+      
+      div#arrowright {
+        background: transparent url(../img/arrow_circle_right.png) no-repeat right center;
+    	-webkit-background-size: 15px 25px;
+    	width:40%;
+    	margin-right:5px;
+    	float: right;
+    	height:100%;
+      }
       
       div#imageoverlay {
         background: transparent url(../img/feed_img_overlay.png) no-repeat; 
@@ -73,6 +81,54 @@
     	color:#fff;
     	font-size:16px;
     	padding-top:5px;
+      }
+      
+      div#connectorskip {
+      	margin-top:10px;
+      }
+      
+      div#about, div#work{
+	      padding:10px 0px;
+      }
+      div#about div#container, div#work div#container, div#live div#container   {
+      	padding: 0 15px;
+      	
+      }
+      div#divider {
+	      width:100%;
+	      height: 2px;
+          background: transparent url(../img/divider.png) repeat-x;
+    	  -webkit-background-size: 75px 2px;
+    	  margin:5px 0;
+      }
+      div#icon {
+      	float:left;
+      	width:40px;
+      	height:50px;
+      }
+      div#work div#icon, div#live div#icon {
+      	height:30px;
+      	}
+      div#text {
+      	float:right;
+      	width:245px;
+      	text-align: left;
+      	padding-bottom:4px;
+      	}
+      div#about div#icon {
+        background: transparent url(../img/info_quote.png) center center no-repeat;
+    	-webkit-background-size: 21px 16px;
+      }
+      div#work div#icon {
+        background: transparent url(../img/info_work.jpg) center center no-repeat;
+    	-webkit-background-size: 30px 30px;
+      }
+      div#live div#icon {
+        background: transparent url(../img/info_hometown.jpg) center center no-repeat;
+    	-webkit-background-size: 30px 30px;
+      }
+      div#live div#text {
+      	padding-top:5px;
       }
       
       /*
