@@ -119,7 +119,10 @@ $(function() {
    });
 
    App.SkipView = Ember.View.extend({
-
+      friendBinding : 'App.friendController.content',
+      submit : function(evt) {
+         App.stateManager.goToState('friendView');
+      }
    });
    /* End Views */
 
@@ -160,8 +163,12 @@ $(function() {
                friend.set("fullName", details[0].data.firstName + " " + details[0].data.lastName);
                friend.set("description", (details[0].data.bio) ?  details[0].data.bio : details[0].data.headline);
                
-               //friend.set("photo", details[0].data.pictureUrl);
-               friend.set("photo", "/img/team/" + details[0].data.firstName+".jpg")
+               friend.set("photo", details[0].data.pictureUrl);
+               //friend.set("photo", "/img/team/" + details[0].data.firstName+".jpg")
+               //$("#imagecontainer").css("background-image", "url('/img/team/" +details[0].data.firstName+".jpg')");
+               //$("#imagecontainer").css("background-image", "url('/img/team/" +details[0].data.firstName+".jpg')");
+               $("#imagecontainer").css("background-image", "url('" + details[0].data.pictureUrl + "')");
+               
                friend.set("location", details[0].data.location.name);
                friend.set("profession", details[0].data.industry);
                
@@ -174,6 +181,7 @@ $(function() {
             //Twitter
                $.getJSON('/getFriend', {"service":"twitter","id":details[1]}, function(twitUser){
                   var jTwit = JSON.parse(twitUser);
+                  friend.set("photo", details[1].photo);
                   friend.set("activity", jTwit.status);
                   console.log("twitter " + jTwit.twitUser);
                   servArr["twitter"] = jTwit.username;

@@ -69,8 +69,8 @@ function getTwitterUser(screen_name, session, res){
       var person = { 
          "id" : contact.idr,
          "name" : contact.data.name,
-         "username" : contact.data.screen_name,
-         "description" : contact.data.description,
+         "username" : (contact.data.screen_name) ? contact.data.screen_name : "",
+         "description" : (contact.data.description) ? contact.data.description : "",
          "location" : contact.data.location,
          "status" : contact.data.status && contact.data.status.text,
          "photo" : contact.data.profile_image_url };

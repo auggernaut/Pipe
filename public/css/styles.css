@@ -42,7 +42,7 @@
       	margin: 0 auto;
       	width:300px;
       	position:relative;
-        background: transparent url(https://fbcdn-sphotos-a.akamaihd.net/hphotos-ak-ash4/294385_666169201648_5846446_n.jpg) no-repeat top center; 
+        background: transparent url() no-repeat top center; 
         background-size:cover;
         -webkit-border-radius: 8px;
         border-radius:8px;
@@ -265,7 +265,7 @@
     	
     }
     
-    a:hover {text-decoration:none;}
+    a, a:hover {text-decoration:none;}
     
     h1#name {font-size:45px; padding-bottom:40px; padding-top:18px;}
     
@@ -284,6 +284,8 @@
     	
     	padding-bottom:20px;
     }
+    
+    div#bigcircles {border-bottom:solid 5px #ff8400}
     
    div#about div#icon {-webkit-background-size: 42px 32px;height: 60px;width:55px; padding-top:20px;}
    div#work div#icon {-webkit-background-size: 50px 50px; height: 70px;width:60px;}
