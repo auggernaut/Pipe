@@ -97,7 +97,7 @@ $(function() {
                      }
                   ]
                },
-               "subject": "Catching up through Pipe!",
+               "subject": $("#subject").val() + "",
                "body": $("#messageText").val() + ""
             }, function(data, textStatus, jqXHR) {
                App.friendController.set("alert", "LinkedIn message sent!");
@@ -105,29 +105,34 @@ $(function() {
             });
       },
       sendTwitter : function(evt){
-         return console.log(this.get('friend'));
+         console.log(this.get('friend'));
          singly.post('/proxy/twitter/direct_messages/new.json', {
                "screen_name": this.get('friend').services['twitter'],
                "text": $("#messageText").val()
             }, function(data, textStatus, jqXHR) {
+               console.log(data);
+            console.log(textStatus);
                App.friendController.set("alert", "Twitter message sent!");
                App.stateManager.goToState('friendView');
             });
       },
       selectMail : function(evt) {
          App.friendController.set("connectVia", "mail");
+         $('#subject').show();
          $('#mail').attr('src','img/social_networks/gcontacts_blue.png');
          $('#linkedin').attr('src', 'img/social_networks/linkedin_grey.png');
          $('#twitter').attr('src', 'img/social_networks/twitter_grey.png');
       },
       selectLinkedIn : function(evt) {
          App.friendController.set("connectVia", "linkedin");
+         $('#subject').show();
          $('#mail').attr('src','img/social_networks/gcontacts_grey.png');
          $('#linkedin').attr('src', 'img/social_networks/linkedin_blue.png');
          $('#twitter').attr('src', 'img/social_networks/twitter_grey.png');
       },
       selectTwitter : function(evt) {
          App.friendController.set("connectVia", "twitter");
+         $('#subject').hide();
          $('#mail').attr('src','img/social_networks/gcontacts_grey.png');
          $('#linkedin').attr('src', 'img/social_networks/linkedin_grey.png');
          $('#twitter').attr('src', 'img/social_networks/twitter_blue.png');
@@ -176,7 +181,8 @@ $(function() {
                friend.set("fullName", details[0].data.firstName + " " + details[0].data.lastName);
                friend.set("description", (details[0].data.bio) ?  details[0].data.bio : details[0].data.headline);
                
-               friend.set("photo", details[0].data.pictureUrl);
+               //friend.set("photo", details[0].data.pictureUrl);
+               friend.set("photo", "/img/team/" + details[0].data.firstName+".jpg")
                friend.set("location", details[0].data.location.name);
                friend.set("profession", details[0].data.industry);
                
@@ -188,9 +194,10 @@ $(function() {
             if(details[1]){
             //Twitter
                $.getJSON('/getFriend', {"service":"twitter","id":details[1]}, function(twitUser){
-                  var jTwit = JSON.parse(twitUser);
+                  console.log(twitUser);
+                  var jTwit = twitUser;//JSON.parse(twitUser);
                   friend.set("activity", jTwit.status);
-                  console.log("twitter " + jTwit.twitUser);
+                  console.log("twitter " + jTwit.username);
                   servArr["twitter"] = jTwit.username;
                   friend.set("services", servArr);
                });

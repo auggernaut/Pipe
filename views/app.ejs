@@ -6,23 +6,25 @@
 <div id="app">
 <script type="text/x-handlebars" data-template-name="friend" id="friend">
 	{{#view App.FriendView}}
-	<div class="container">
-		<div id="alert">{{alert}}</div>
-		<h1 id="name">{{friend.fullName}}</h1>
+	    <div class="container">
+    
+    	<h1 id="name">{{friend.fullName}}</h1>
     	<div class="divider"></div>
     	
-    	<div id="imagecontainer">
-    		<img {{bindAttr src="friend.photo"}} height="165" width="300"/>
-	    	<div id="imageoverlay">
-	    		<div id="arrowright"></div>
-	    		<div id="addanote">{{friend.tagline}}</div>
+    	
+    	<div id="desktopcontainer">
+    	
+	    	<div id="imagecontainer">
+	    		<img {{bindAttr src="friend.photo"}} />
+	    		
+		    	<div id="imageoverlay">	    	</div>
 	    	</div>
-    	</div>
-    	<div id="connectorskip">
+
+		<div id="connectorskip">
     		<a href="#" {{action "connect"}}><img id="connect" src="img/connect_btn.jpg" width="231px" height="44px"/></a>
-    		<a href="#" {{action "skip"}}>
-    		<img id="skip" src="img/skip_btn.jpg" width="64px" height="44px" /></a>
+    		<a href="#" {{action "skip"}}><img id="skip" src="img/skip_btn.jpg" width="64px" height="44px" /></a>
     	</div>
+    	
 		<div id="info">
 	    	<div id="about">
 	    		<div id="container">
@@ -66,23 +68,28 @@
 
 <script type="text/x-handlebars" data-template-name="connect" id="connect">	
 	{{#view App.ConnectView}}
-<div class="container">
-<h1 id="name">{{friend.fullName}}</h1>
-    		<div id="sendsocialnetworks">
-    			<a href="#" {{action "selectMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
-    			<a href="#" {{action "selectLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png" width="46" heigh="46" /></a>
-    			<a href="#" {{action "selectTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
-    			</a>
-    		</div>
-	<form id="contact">
+	<div class="container">
+		<h1 id="name">{{friend.fullName}}</h1>
+    		<div id="desktopcontainer">
+    		<div id="divider" class="nodesktop"></div>
+    			
+		<form id="contact">
+		    <input type="text" id="subject" value="Enter a subject here ..." style="display:none;"/>
     		<textarea id="messageText">Enter a message here ...</textarea>
     	
     	<div id="sendvia">
     		<div id="sendviatext">
-    		<a href="#" {{action "send"}}>Send message!</a>
+    		Send via:
+    		</div>
+    		<div id="sendsocialnetworks">
+    		<a href="#" {{action "selectMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
+    			<a href="#" {{action "selectLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png"width="46" heigh="46" /></a>
+    			<a href="#" {{action "selectTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
+    			</a>
     		</div>
     	</div>
 	    	<div style="clear:both"></div>	
+	    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" {{action "send"}} />
     	</form>
     	<div id="info">
 	    	<div id="about">
@@ -121,6 +128,7 @@
 	    	<div style="clear:both"></div>
 	    	<div id="divider"></div>
     	</div>  
+    	</div>
 	</div>
 	{{/view}}
 </script>

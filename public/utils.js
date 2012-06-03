@@ -24,3 +24,13 @@ var singly = {
       $.post(apiBaseUrl + url, options, callback, 'json');
    }
 };
+
+var twitter = {
+	post: function(url, options, callback) {
+		if (options === undefined || options === null) {
+			options = {};
+		}
+
+		url = 'https://api.twitter.com/1' + url + '?'
+	}
+}

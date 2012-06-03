@@ -117,7 +117,7 @@ function getAccountIds(contacts)
    if(contacts.length > 1) {
       for(var i = 0; i < contacts.length; i++){
          if(contacts[i].idr.indexOf("twitter") != -1){
-            pTwitter = contacts[i].data.screen_name;
+            pTwitter = contacts[i].data.id;
          }
          else if(contacts[i].idr.indexOf("facebook") != -1){
             pFacebook = contacts[i].data.id
