@@ -152,21 +152,24 @@ app.get('/friend', function(req, res) {
       console.log(myFriends[req.session.pIndex]);
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[req.session.pIndex], req.session, function(err, item) {
-      
-         console.log(item);
+         if (err && err.statusCode) {
+            console.log("there was a firefight!");
+            res.write("Error");
+            res.end();
+            return;
+         }
+         var name =  item.data.firstName + "%20" + item.data.lastName;
 
-      var name =  item.data.firstName + "%20" + item.data.lastName;
-         
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
-      
+
             var cc = JSON.parse(contacts);
             console.log("---" + cc.length);
             if(cc.length > 1) {
 
                for(var i = 0; i < cc.length; i++){
                   if(cc[i].idr.indexOf("twitter") != -1){
-                     a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session); 
-                     
+                     a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session);
+
                   }
                   else if(cc[i].idr.indexOf("facebook") != -1){
                      a[2] = getFacebookUser(cc[i].data.id, req.session);
@@ -181,7 +184,7 @@ app.get('/friend', function(req, res) {
             }
 
             res.write(JSON.stringify(a));
-            res.end(); 
+            res.end();
          });
       });
    }
@@ -227,7 +230,7 @@ app.get('/friend', function(req, res) {
       });
    }
 
-      //console.log(a);
+   //console.log(a);
 });
 
 
