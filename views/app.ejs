@@ -15,7 +15,6 @@
     	<div id="desktopcontainer">
     	
 	    	<div id="imagecontainer">
-	    		<img {{bindAttr src="friend.photo"}} />
 	    		
 		    	<div id="imageoverlay">	    	</div>
 	    	</div>
@@ -69,8 +68,9 @@
 <script type="text/x-handlebars" data-template-name="connect" id="connect">	
 	{{#view App.ConnectView}}
 	<div class="container">
-		<h1 id="name">{{friend.fullName}}</h1>
-    		<div id="desktopcontainer">
+		<div id="desktopcontainer">
+		<a href="/pipe"><h1 id="name" class="back">{{friend.fullName}}</h1></a>
+    		
     		<div id="divider" class="nodesktop"></div>
     			
 		<form id="contact">
@@ -134,9 +134,34 @@
 </script>
 
 <script type="text/x-handlebars" data-template-name="skip" id="skip">
-	<h2>Skip</h2>
+	
 	{{#view App.SkipView}}
 		 
+    <div class="container">
+    	
+    	<div id="desktopcontainer">
+	    	
+	    	<a href="/pipe"><h1 id="name" class="back">{{friend.fullName}}</h1></a>
+	    	<div id="divider" class="nodesktop"></div>
+	    	
+	    	<form id="contact">
+	    		<p style="text-align:left;">Do you want us to delete this person from your Pipe permanently?</p>
+	    		<div id="radios">
+			    	<input type="radio" name="howlong" value="forever" /> Yes, I never want to contact this person<br />
+			    	<input type="radio" name="howlong" value="temporarily" /> No, show me this person again later<br />
+	    		</div>
+	  
+	  	    	<div style="clear:both"></div>
+	    	
+		    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" {{action "submit"}} />
+		    		
+	    	</form>
+	    	
+	    	<br /><br />
+	    	    	
+    	</div>
+    	
+    </div> <!-- /container -->
 	{{/view}}
 </script>
 </div>	
