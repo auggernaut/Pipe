@@ -71,7 +71,13 @@ $(function() {
       send : function(evt) {
          switch (App.friendController.get("connectVia")) {
             case "twitter":
-               sendLinkedIn(evt);
+               this.sendTwitter(evt);
+               break;
+            case "linkedin":
+               this.sendLinkedIn(evt);
+               break;
+            case "mail":
+               this.sendMail(evt);
                break;
          }
       },
@@ -97,11 +103,12 @@ $(function() {
                App.friendController.set("alert", "LinkedIn message sent!");
                App.stateManager.goToState('friendView');
             });
-      },//alert($("#messageText").val());
+      },
       sendTwitter : function(evt){
-         twitter.post('/proxy/twitter/account/verify_credentials', {
-               //"screen_name": this.get('friend').services['twitter'],
-               //"text": $("#messageText").val()
+         return console.log(this.get('friend'));
+         singly.post('/proxy/twitter/direct_messages/new.json', {
+               "screen_name": this.get('friend').services['twitter'],
+               "text": $("#messageText").val()
             }, function(data, textStatus, jqXHR) {
                App.friendController.set("alert", "Twitter message sent!");
                App.stateManager.goToState('friendView');
@@ -109,12 +116,21 @@ $(function() {
       },
       selectMail : function(evt) {
          App.friendController.set("connectVia", "mail");
+         $('#mail').attr('src','img/social_networks/gcontacts_blue.png');
+         $('#linkedin').attr('src', 'img/social_networks/linkedin_grey.png');
+         $('#twitter').attr('src', 'img/social_networks/twitter_grey.png');
       },
       selectLinkedIn : function(evt) {
          App.friendController.set("connectVia", "linkedin");
+         $('#mail').attr('src','img/social_networks/gcontacts_grey.png');
+         $('#linkedin').attr('src', 'img/social_networks/linkedin_blue.png');
+         $('#twitter').attr('src', 'img/social_networks/twitter_grey.png');
       },
       selectTwitter : function(evt) {
          App.friendController.set("connectVia", "twitter");
+         $('#mail').attr('src','img/social_networks/gcontacts_grey.png');
+         $('#linkedin').attr('src', 'img/social_networks/linkedin_grey.png');
+         $('#twitter').attr('src', 'img/social_networks/twitter_blue.png');
       }
    });
 

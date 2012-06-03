@@ -175,7 +175,7 @@ app.get('/findFriends', function(req, res) {
          req.session.pIndex = req.session.pIndex + 1;
       */
 
-      var myFriends = ["lQEya8Lw1c", "QlNyTOIv-M"];
+      var myFriends = ["lQEya8Lw1c"];
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
          if (lin === undefined) {
