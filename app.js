@@ -148,7 +148,7 @@ app.get('/friend', function(req, res) {
       else
          req.session.pIndex = req.session.pIndex + 1;
       
-      var myFriends = ["jEx8fWMs6m", "7008380"];
+      var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
 
       console.log(myFriends[req.session.pIndex]);
 
