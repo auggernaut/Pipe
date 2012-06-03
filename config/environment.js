@@ -1,5 +1,6 @@
 // Pick a secret to secure your session storage
 var sessionSecret = '42';
+var personIndex = 0;
 
 module.exports = function(app, dbconn, express) {
   // Setup for the express web framework
@@ -7,10 +8,8 @@ module.exports = function(app, dbconn, express) {
      app.use(express.logger());
      app.use(express.bodyParser());
      app.use(express.cookieParser());
-     app.use(express.session({
-        secret: sessionSecret
-     }));
-     app.use(app.router);
+     
+     //app.use(app.router);
   });
 
   // We want exceptions and stracktraces in development
@@ -27,6 +26,10 @@ module.exports = function(app, dbconn, express) {
      dbconn.name = 'pipe_development';
      dbconn.user = 'pipe_development';
      dbconn.password = '04efjw0328j038j2f';
+     app.use(express.session({
+        secret: sessionSecret,
+        pIndex: personIndex
+     }));
   });
 
   // ... but not in production

@@ -16,8 +16,8 @@ $(function() {
 
    App.Friend = Ember.Object.extend({
       id : null,
-      firstName : null,
-      lastName : null,
+      firstName : "",
+      lastName : "",
       fullName: Ember.computed(function(key, value) {
           // getter
           if (arguments.length === 1) {
@@ -32,13 +32,14 @@ $(function() {
             return value;
           }
        }).property('firstName', 'lastName'),
-      services : [],
+      services : null,
       photo : null,
       description : null,
       location : null,
       profession : null,
       activity : null,
-      notes : null
+      notes : null,
+      email : null
    });
    /* End Models */
 
@@ -50,6 +51,7 @@ $(function() {
    /* Views */
    App.FriendView = Ember.View.extend({
       friendBinding: 'App.friendController.content', 
+      alertBinding : 'App.friendController.alert',
       //activityBinding : 'App.activityController.content',
       //notesBinding : 'App.notesController.content',
       connect : function(evt) {
@@ -63,7 +65,53 @@ $(function() {
    });
 
    App.ConnectView = Ember.View.extend({
-      servicesBinding : 'App.Friend.services'
+      friendBinding : 'App.friendController.content',
+      send : function(evt) {
+         //App.activityController.set('friendId', this.get('content').id);
+         //alert($("#messageText").val());
+
+/*
+         if(App.friendController.connectVia == "linkedin")
+         {
+            $.post('http://api.linkedin.com/v1/people/~/mailbox',
+            {
+               "recipients": {
+                  "values": [
+                  {
+                     "person": {
+                        "_path": "/people/" + person_id
+                     }
+                  }
+                  ]
+               },
+               "subject": "Hi Bob",
+               "body": "Would love to catch up again."
+            }
+            , function(data, textStatus, jqXHR) { 
+               App.friendController.set("alert", "Message Sent!");
+               App.stateManager.goToState('friendView');
+            }, 'json')
+         }
+*/
+         App.friendController.set("alert", "Message Sent!");
+         App.stateManager.goToState('friendView');
+      },
+      selectOne : function(evt) {
+         $("#subject").css("display", "none");
+         App.friendController.set("connectVia", "linkedin");
+      },
+      selectTwo : function(evt) {
+         $("#subject").css("display", "none");
+         App.friendController.set("connectVia", "twitter");
+      },
+      selectThree : function(evt) {
+         $("#subject").css("display", "none");
+         App.friendController.set("connectVia", "facebook");
+      },
+      selectFour : function(evt) {
+         $("#subject").css("display", "inline");
+         App.friendController.set("connectVia", "email");
+      }
    });
 
    App.SkipView = Ember.View.extend({
@@ -95,6 +143,7 @@ $(function() {
 
    App.set("friendController", Ember.Object.create({
       content : null,
+      alert : null,
       populate : function(){
 
          var friend = App.Friend.create();
@@ -102,12 +151,21 @@ $(function() {
             console.log(details);
 
             
-            friend.set("fullName", details.name);
-            friend.set("description", details.description);
-            friend.set("activity", details.status);
-            friend.set("photo", details.photo);
-            friend.set("location", details.location);
-            friend.set("profession", details.profession);
+            friend.set("fullName", details[0].data.firstName + " " + details[0].data.lastName);
+            friend.set("description", details[0].data.headline);
+            friend.set("activity", details[1] && details[1].status);
+            friend.set("photo", details[0].data.pictureUrl);
+            friend.set("location", details[0].data.location.name);
+            friend.set("profession", details[0].data.industry);
+            friend.set("email", details[3]);
+
+            var services = {
+               "one" : "linkedin",
+               "two" : (details[1]) ? "twitter" : null,
+               "three" : (details[2]) ? "facebook" : null,
+               "four" : (details[3]) ? "email" : null
+            }
+            friend.set("services", services);
             
          });
 
