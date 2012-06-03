@@ -156,6 +156,7 @@ $(function() {
       alert : null,
       populate : function(){
 
+         var servArr = [];
          var friend = App.Friend.create();
          $.getJSON('/findFriends', null, function(details){
             console.log("Details for user\n" + details);
@@ -169,26 +170,33 @@ $(function() {
                friend.set("location", details[0].data.location.name);
                friend.set("profession", details[0].data.industry);
                
-               friend.set("tagline", details[0].data.headline)
+               friend.set("tagline", details[0].data.headline);
+
+               servArr["linkedin"] = details[0].data.id;
+               friend.set("services", servArr);
             }
-            // if(details[1]){
-            // //Twitter
-            //    $.getJSON('/getFriend', {"service":"twitter","id":details[1]}, function(twitUser){
-            //       friend.set("activity", twitUser.status);
-            //    });
-            // }
+            if(details[1]){
+            //Twitter
+               $.getJSON('/getFriend', {"service":"twitter","id":details[1]}, function(twitUser){
+                  friend.set("activity", twitUser.status);
+                  servArr["twitter"] = twitUser.username;
+                  friend.set("services", servArr);
+               });
+            }
             if(details[2]){
             //Facebook
                $.getJSON('/getFriend', {"service":"facebook","id":details[2]}, function(fbUser){
                      console.log(fbUser);
                      friend.set("activity", fbUser.status);
-                     friend.set("profession", fbuser.data.profession);
+                     friend.set("description", fbUser.description);
                });  
             }
-            // if(details[3]){
-            // //GContacts
-            //    friend.set("email", details[3]);
-            // }
+            if(details[3]){
+            //GContacts
+               friend.set("email", details[3]);
+               servArr["gcontacts"] = details[3];
+               friend.set("services", servArr);
+            }
             
             /*
 
