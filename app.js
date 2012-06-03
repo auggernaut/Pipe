@@ -7,8 +7,7 @@ var OAuth2 = require('oauth').OAuth2;
 
 // Create an HTTP server
 var app = express.createServer();
-var dbconn = {};
-require('./config/environment.js')(app, dbconn, express);
+require('./config/environment.js')(app, express);
 
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
