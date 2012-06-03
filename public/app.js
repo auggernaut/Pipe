@@ -16,8 +16,8 @@ $(function() {
 
    App.Friend = Ember.Object.extend({
       id : null,
-      firstName : null,
-      lastName : null,
+      firstName : "",
+      lastName : "",
       fullName: Ember.computed(function(key, value) {
           // getter
           if (arguments.length === 1) {
@@ -51,6 +51,7 @@ $(function() {
    /* Views */
    App.FriendView = Ember.View.extend({
       friendBinding: 'App.friendController.content', 
+      alertBinding : 'App.friendController.alert',
       //activityBinding : 'App.activityController.content',
       //notesBinding : 'App.notesController.content',
       connect : function(evt) {
@@ -64,7 +65,53 @@ $(function() {
    });
 
    App.ConnectView = Ember.View.extend({
-      friendBinding : 'App.friendController.content'
+      friendBinding : 'App.friendController.content',
+      send : function(evt) {
+         //App.activityController.set('friendId', this.get('content').id);
+         //alert($("#messageText").val());
+
+/*
+         if(App.friendController.connectVia == "linkedin")
+         {
+            $.post('http://api.linkedin.com/v1/people/~/mailbox',
+            {
+               "recipients": {
+                  "values": [
+                  {
+                     "person": {
+                        "_path": "/people/" + person_id
+                     }
+                  }
+                  ]
+               },
+               "subject": "Hi Bob",
+               "body": "Would love to catch up again."
+            }
+            , function(data, textStatus, jqXHR) { 
+               App.friendController.set("alert", "Message Sent!");
+               App.stateManager.goToState('friendView');
+            }, 'json')
+         }
+*/
+         App.friendController.set("alert", "Message Sent!");
+         App.stateManager.goToState('friendView');
+      },
+      selectOne : function(evt) {
+         $("#subject").css("display", "none");
+         App.friendController.set("connectVia", "linkedin");
+      },
+      selectTwo : function(evt) {
+         $("#subject").css("display", "none");
+         App.friendController.set("connectVia", "twitter");
+      },
+      selectThree : function(evt) {
+         $("#subject").css("display", "none");
+         App.friendController.set("connectVia", "facebook");
+      },
+      selectFour : function(evt) {
+         $("#subject").css("display", "inline");
+         App.friendController.set("connectVia", "email");
+      }
    });
 
    App.SkipView = Ember.View.extend({
@@ -96,6 +143,7 @@ $(function() {
 
    App.set("friendController", Ember.Object.create({
       content : null,
+      alert : null,
       populate : function(){
 
          var friend = App.Friend.create();

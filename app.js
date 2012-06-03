@@ -3,23 +3,13 @@ var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
 var OAuth2 = require('oauth').OAuth2;
-var sessionSecret = '42';
+
 
 // Create an HTTP server
 var app = express.createServer();
-app.configure(function() {
-     app.use(express.logger());
-     app.use(express.bodyParser());
-     app.use(express.cookieParser());
-     app.use(express.session({
-        secret: sessionSecret
-     }));
-     app.use(app.router);
-      app.use(express.static(__dirname + '/public'));
-      app.port = 8043;
-     app.hostBaseUrl = process.argv[4] || 'http://localhost:' + app.port;
-     
-  });
+var dbconn = {};
+require('./config/environment.js')(app, dbconn, express);
+
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
 
@@ -69,64 +59,6 @@ function getLink(prettyName, profiles, token) {
       queryString,
       prettyName);
 }
-
-// Use ejs instead of jade because HTML is easy
-app.set('view engine', 'ejs');
-
-app.get('/user', function (req, res) {
-  var users = {};
-  res.writeHead(200, {"Content-Type": "text/html"});
-  res.write(JSON.stringify(users));
-  res.end();
-});
-
-
-app.get('/friend', function(req, res) {
-
-   getProtectedResource('/services/linkedin/connections', req.session, function(err, lin){
-      //console.log(statuses); 
-      
-      var a = [];
-      var c = JSON.parse(lin);
-
-      var linContact = a[0] = c[Math.floor(Math.random()*c.length)];
-      
-      var name =  linContact.data.firstName + "%20" + linContact.data.lastName;
-      
-      getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
-   
-         var cc = JSON.parse(contacts);
-         console.log("---" + cc.length);
-         if(cc.length > 1) {
-
-            for(var i = 0; i < cc.length; i++){
-               if(cc[i].idr.indexOf("twitter") != -1){
-                  a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session); 
-                  
-               }
-               else if(cc[i].idr.indexOf("facebook") != -1){
-                  a[2] = getFacebookUser(cc[i].data.id, req.session);
-                  found = true;
-               }
-               else if(cc[i].idr.indexOf("gcontacts") != -1)
-                  a[3] = cc[i].data.gd$email && cc[i].data.gd$email[0].address;
-
-               //console.log(a[a.length]);
-            }
-            
-            
-         }
-
-         res.write(JSON.stringify(a));
-         res.end(); 
-
-      });
-
-      //console.log(a);
-      
-   });
-   
-});
 
 function getTwitterUser(screen_name, session){
 
@@ -193,6 +125,112 @@ function getGoogleUser(id){
 
 }
 */
+
+// Use ejs instead of jade because HTML is easy
+app.set('view engine', 'ejs');
+
+app.get('/user', function (req, res) {
+  var users = {};
+  res.writeHead(200, {"Content-Type": "text/html"});
+  res.write(JSON.stringify(users));
+  res.end();
+});
+
+
+app.get('/friend', function(req, res) {
+
+   req.session.pIndex = req.session.pIndex + 1;
+   console.log(req.session.pIndex);
+   
+
+   //IF DEVELOPMENT
+   if (process.env.NODE_ENV != 'production')
+   {
+
+      var myFriends = ["jEx8fWMs6m", "7008380"];
+
+      console.log(myFriends[req.session.pIndex]);
+
+      getProtectedResource('/by/contact/linkedin/' + myFriends[req.session.pIndex], req.session, function(err, item) {
+      
+         console.log(item);
+
+      var name =  item.data.firstName + "%20" + item.data.lastName;
+         
+         getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
+      
+            var cc = JSON.parse(contacts);
+            console.log("---" + cc.length);
+            if(cc.length > 1) {
+
+               for(var i = 0; i < cc.length; i++){
+                  if(cc[i].idr.indexOf("twitter") != -1){
+                     a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session); 
+                     
+                  }
+                  else if(cc[i].idr.indexOf("facebook") != -1){
+                     a[2] = getFacebookUser(cc[i].data.id, req.session);
+                     found = true;
+                  }
+                  else if(cc[i].idr.indexOf("gcontacts") != -1)
+                     a[3] = cc[i].data.gd$email && cc[i].data.gd$email[0].address;
+
+                  //console.log(a[a.length]);
+               }
+
+            }
+
+            res.write(JSON.stringify(a));
+            res.end(); 
+         });
+      });
+   }
+   else
+   {
+      getProtectedResource('/services/linkedin/connections', req.session, function(err, lin){
+         //console.log(statuses); 
+         
+         var a = [];
+         var c = JSON.parse(lin);
+
+         var linContact = a[0] = c[Math.floor(Math.random()*c.length)];
+         
+         var name =  linContact.data.firstName + "%20" + linContact.data.lastName;
+         
+         getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
+
+            var cc = JSON.parse(contacts);
+            console.log("---" + cc.length);
+            if(cc.length > 1) {
+
+               for(var i = 0; i < cc.length; i++){
+                  if(cc[i].idr.indexOf("twitter") != -1){
+                     a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session); 
+                     
+                  }
+                  else if(cc[i].idr.indexOf("facebook") != -1){
+                     a[2] = getFacebookUser(cc[i].data.id, req.session);
+                     found = true;
+                  }
+                  else if(cc[i].idr.indexOf("gcontacts") != -1)
+                     a[3] = cc[i].data.gd$email && cc[i].data.gd$email[0].address;
+
+                  //console.log(a[a.length]);
+               }
+
+            }
+
+            res.write(JSON.stringify(a));
+            res.end(); 
+
+         });
+      });
+   }
+
+      //console.log(a);
+});
+
+
 
 app.get('/', function(req, res) {
    res.render('splash', {session: req.session});
