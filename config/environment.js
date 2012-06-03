@@ -30,7 +30,7 @@ module.exports = function(app, express) {
      app.use(express.static(__dirname + '/../public'));
      app.use(express.errorHandler());
      app.port = process.env.PORT;
-     app.hostBaseUrl = process.argv[4] || 'http://www.getpiped.com';
+     app.hostBaseUrl = process.argv[4] || 'http://www.pipeapp.co';
      app.use(express.session({
         secret: sessionSecret
      }));

@@ -56,7 +56,7 @@ function getLink(prettyName, profiles, token) {
    return sprintf('<a href="%s/oauth/authorize?%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
       apiBaseUrl,
       queryString,
-      prettyName);
+      prettyName.toLowerCase());
 }
 
 function getTwitterUser(screen_name, session){
@@ -246,7 +246,7 @@ app.get('/', function(req, res) {
 app.get('/', function(req, res){
    if (process.env.PRELAUNCH) {
       res.writeHead(200, {"Content-Type": "Text/Html"});
-      res.write("<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel=\"OPKQI452\" class=\"lrdiscoverwidget\" data-logo=\"on\" data-background=\"on\" data-share-url=\"www.getpiped.com\" data-css=\"\"></div><script type=\"text/javascript\" src=\"http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js\"></script></body></html>;");
+      res.write("<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel=\"OPKQI452\" class=\"lrdiscoverwidget\" data-logo=\"on\" data-background=\"on\" data-share-url=\"www.pipeapp.co\" data-css=\"\"></div><script type=\"text/javascript\" src=\"http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js\"></script></body></html>;");
       res.end();
       return;
    }
