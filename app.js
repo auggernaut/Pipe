@@ -1,4 +1,4 @@
-var express = require('express');
+jvar express = require('express');
 var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
@@ -7,8 +7,7 @@ var OAuth2 = require('oauth').OAuth2;
 
 // Create an HTTP server
 var app = express.createServer();
-var dbconn = {};
-require('./config/environment.js')(app, dbconn, express);
+require('./config/environment.js')(app, express);
 
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
@@ -57,7 +56,7 @@ function getLink(prettyName, profiles, token) {
    return sprintf('<a href="%s/oauth/authorize?%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
       apiBaseUrl,
       queryString,
-      prettyName);
+      prettyName.toLowerCase());
 }
 
 function getTwitterUser(screen_name, session, res){
@@ -178,7 +177,10 @@ app.get('/findFriends', function(req, res) {
       var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
-      
+         if (lin === undefined) {
+            res.redirect('auth');
+            return;
+         }
          console.log(lin);
          //var a = [];
 
@@ -187,7 +189,6 @@ app.get('/findFriends', function(req, res) {
          var name =  pLinkedIn.data.firstName + "%20" + pLinkedIn.data.lastName;
          
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
-      
             var ids = getAccountIds(JSON.parse(contacts));  
             ids[0] = pLinkedIn;          
             res.write(JSON.stringify(ids));

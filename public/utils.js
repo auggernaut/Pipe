@@ -12,5 +12,15 @@ var singly = {
       options.access_token = accessToken;
 
       $.getJSON(apiBaseUrl + url, options, callback);
+   },
+   post: function(url, options, callback) {
+      if (options === undefined ||
+         options === null) {
+         options = {};
+      }
+
+      url = url + "?access_token=" + accessToken;
+
+      $.post(apiBaseUrl + url, options, callback, 'json');
    }
 };
