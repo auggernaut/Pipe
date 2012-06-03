@@ -53,7 +53,7 @@ function getLink(prettyName, profiles, token) {
       service: service
    });
 
-   return sprintf('<a href="%s/oauth/authorize?%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
+   return sprintf('<a href="%s/oauth/authorize?flag=dm&%s" class="authorize"><img style="margin-right:10px;" src="img/social_networks/%s_grey.png" alt="Pipe" width="46" height="46" /></a>',
       apiBaseUrl,
       queryString,
       prettyName.toLowerCase());
@@ -63,6 +63,7 @@ function getTwitterUser(screen_name, session, res){
 
    //Get twitter user details
    getProtectedResource('/by/contact/twitter/' + screen_name, session, function(err, item) {
+      console.log("HERE GOT: %s", item);
       var contact = JSON.parse(item)[0]; 
       
       var person = { 
@@ -74,7 +75,7 @@ function getTwitterUser(screen_name, session, res){
          "status" : contact.data.status && contact.data.status.text,
          "photo" : contact.data.profile_image_url };
 
-      console.log(person);
+      console.log("twitter - " + JSON.stringify(person));
       
       res.write(JSON.stringify(person));
       res.end();
@@ -87,7 +88,7 @@ function getFacebookUser(id, session, res){
    getProtectedResource('/by/contact/facebook/' + id, session, function(err, item) {
       var contact = JSON.parse(item)[0]; 
       
-      person = { 
+      var person = { 
          "id" : contact.idr,
          "name" : contact.data.name,
          "username" : contact.data.username,
@@ -97,7 +98,7 @@ function getFacebookUser(id, session, res){
          "photo" : contact.oembed.thumbnail_url,
          "profession" : contact.data.work && contact.data.work[0].employer.name };
       
-      console.log(person);
+      console.log("facebook --" + person);
 
       res.write(JSON.stringify(person));
       res.end();

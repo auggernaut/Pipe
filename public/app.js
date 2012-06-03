@@ -68,6 +68,9 @@ $(function() {
    App.ConnectView = Ember.View.extend({
       friendBinding : 'App.friendController.content',
       servicesBinding : 'App.friendController.services',
+      send : function(evt) {
+
+      },
       sendMail : function(evt) {
          //App.activityController.set('friendId', this.get('content').id);
          App.friendController.set("alert", this.get('friend').services['linkedin']);
@@ -94,13 +97,22 @@ $(function() {
             });
       },//alert($("#messageText").val());
       sendTwitter : function(evt){
-         singly.post('/proxy/twitter/direct_messages/new.json', {
-               "screen_name": this.get('friend').services['twitter'],
-               "text": $("#messageText").val()
+         twitter.post('/proxy/twitter/account/verify_credentials', {
+               //"screen_name": this.get('friend').services['twitter'],
+               //"text": $("#messageText").val()
             }, function(data, textStatus, jqXHR) {
                App.friendController.set("alert", "Twitter message sent!");
                App.stateManager.goToState('friendView');
             });
+      },
+      selectMail : function(evt) {
+
+      },
+      selectLinkedIn : function(evt) {
+
+      },
+      selectTwitter : function(evt) {
+
       }
    });
 

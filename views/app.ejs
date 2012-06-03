@@ -68,18 +68,18 @@
 	{{#view App.ConnectView}}
 <div class="container">
 <h1 id="name">{{friend.fullName}}</h1>
+    		<div id="sendsocialnetworks">
+    			<a href="#" {{action "selectMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
+    			<a href="#" {{action "selectLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png"width="46" heigh="46" /></a>
+    			<a href="#" {{action "selectTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
+    			</a>
+    		</div>
 	<form id="contact">
     		<textarea id="messageText">Enter a message here ...</textarea>
     	
     	<div id="sendvia">
     		<div id="sendviatext">
-    		Send via:
-    		</div>
-    		<div id="sendsocialnetworks">
-    			<a href="#" {{action "sendMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
-    			<a href="#" {{action "sendLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png"width="46" heigh="46" /></a>
-    			<a href="#" {{action "sendTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
-    			</a>
+    		<a href="#" {{action "send"}}>Send message!</a>
     		</div>
     	</div>
 	    	<div style="clear:both"></div>	
