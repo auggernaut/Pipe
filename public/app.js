@@ -14,16 +14,6 @@ $(function() {
       settings : []
    });
 
-   App.Slice = Ember.Object.extend({
-      id : null,
-      name : null,
-      photo : null,
-      tagCloud : null,
-      lastActivity : null,
-      lastNote : null,
-      timeRemaining : null
-   });
-
    App.Friend = Ember.Object.extend({
       id : null,
       firstName : null,
@@ -42,23 +32,13 @@ $(function() {
             return value;
           }
        }).property('firstName', 'lastName'),
-      profiles : [],
+      services : [],
       photo : null,
-      description : null
-   });
-
-   App.Activity = Ember.Object.extend({
-      id : null,
-      application : null,
-      service : null,
-      text : null,
-      embed : null
-   });
-
-   App.Note = Ember.Object.extend({
-      id : null,
-      text : null,
-      date : null
+      description : null,
+      location : null,
+      profession : null,
+      activity : null,
+      notes : null
    });
    /* End Models */
 
@@ -67,72 +47,29 @@ $(function() {
 
 
 
-
-
-
-
    /* Views */
-   App.AuthView = Ember.View.extend({
-      meBinding : 'App.meController.content',
-      acceptAuth : function(evt){
-         // If there was no access token defined then return
-         if (accessToken === 'undefined' ||
-            accessToken === undefined) {
-            $('#authMessage').css('display', 'block');
-         }
-         else
-         {
-            App.stateManager.goToState("pipeView");
-         }
+   App.FriendView = Ember.View.extend({
+      friendBinding: 'App.friendController.content', 
+      //activityBinding : 'App.activityController.content',
+      //notesBinding : 'App.notesController.content',
+      connect : function(evt) {
+         //App.friendController.set('content', this.get('content'));
+         App.stateManager.goToState('connectView');
+      },
+      skip : function(evt) {
+         //App.activityController.set('friendId', this.get('content').id);
+         App.stateManager.goToState('skipView');
       }
    });
 
-   App.PipeView = Ember.View.extend({
-      pipeBinding: 'App.pipeController.content',
-      movePipeUp: function(){},
-      movePipeDown: function(){} 
+   App.ConnectView = Ember.View.extend({
+      servicesBinding : 'App.Friend.services'
    });
 
-   App.SliceView = Ember.View.extend({
-      click : function(evt) {
-         App.pipeController.set('selected', this.get('content'));
-      },
-      viewDetails : function(evt) {
-         App.detailsController.set('content', this.get('content'));
-         App.stateManager.goToState('detailsView');
-      },
-      viewActivity : function(evt) {
-         App.activityController.set('friendId', this.get('content').id);
-         App.stateManager.goToState('activityView');
-      },
-      viewNotes : function(evt) {
-         App.notesController.set('friendId', this.get('content').id);
-         App.stateManager.goToState('notesView');
-      },
-      classNameBindings : "isSelected",
-      isSelected : function() {
-         return App.pipeController.get('selected') == this.get('content');
-      }.property('App.pipeController.selected')
-   });
+   App.SkipView = Ember.View.extend({
 
-   App.DetailsView = Ember.View.extend({
-      detailsBinding: 'App.detailsController.content',  
-  });
-
-   App.ActivityView = Ember.View.extend({
-      activityBinding : 'App.activityController.content'
-   });
-
-   App.NotesView = Ember.View.extend({
-      notesBinding : 'App.notesController.content'
    });
    /* End Views */
-
-
-
-
-
-
 
 
 
@@ -156,108 +93,27 @@ $(function() {
       }
    }));
 
-   App.set("pipeController", Ember.Object.create({
-      content: [],
-      selected: null,
-      populate: function(){
-
-         /**** TODO *****/
-         //DETERMINE NEXT TWO WEEKS OF FRIENDS TO CONTACT
-         //CREATE SLICES
-         //ORDER BY TIME REMAINING
-         //SET SELECTED
-
-         /***** TEMPORARY ******/
-         //Set 3 predefined friends
-         var slices = [];
-         var friendIds = ["df3c7dcc06a34f0548cc58682b17be11_a8ed5a2d9", "d89b0311c4c7c1e457edf2b2e8e0d829_a8ed5a2d9", "46d13b4ce2ff35bf7aba02823308805b_a8ed5a2d9"];
-         for (var i = 0, friendId; friendId = friendIds[i++];) {
-            singly.get('/id/' + friendId, null, function(item) {
-                  var slice = App.Slice.create();
-                  console.log(item);
-                  slice.set("name", item.data.name);   
-                  slice.set("id", item.id);
-                  slices.pushObject(slice);
-            });
-         }
-         this.set("content", slices);
-         //Set random Activities for each
-         //Set random Notes for each
-         //Set Selected
-         this.set("selected", this.get("content")[1]);
-
-      }
-   }));
-
-
-   App.set("detailsController", Ember.Object.create({
+   App.set("friendController", Ember.Object.create({
       content : null,
       populate : function(){
 
-         /***** TODO *******/
-         // GET DETAILS OF FRIEND FROM ALL SERVICES
-
-         /***** TEMPORARY ******/
-         var contactId = this.get("content").id;
          var friend = App.Friend.create();
-         singly.get('/id/' + contactId, null, function(item) {
-                  //console.log(item); 
-                  friend.set("fullName", item.data.name);   
-                  friend.set("id", item.id);
-            });
+         $.getJSON('/friend', null, function(details){
+            console.log(details);
 
-         this.set("content", friend);
-      }
-   }));
-
-   App.set("activityController", Ember.Object.create({
-      content : [],
-      friendId : null,
-      populate : function(){
-
-         /***** TODO *******/
-         // GET ACTIVITIES OF FRIEND FROM ALL SERVICES
-
-         /***** TEMPORARY ******/         
-         //console.log(this.get("friendId"));
-         var activityArr = [];
-
-         singly.get('/types/statuses_feed', {limit: 50}, function(statuses){
-            _.each(statuses, function(status){
-               //console.log(status);
-               var activity = App.Activity.create();
-               activity.set("text", status.data.text);
-               activityArr.pushObject(activity);
-            });
+            
+            friend.set("fullName", details.name);
+            friend.set("description", details.description);
+            friend.set("activity", details.status);
+            friend.set("photo", details.photo);
+            friend.set("location", details.location);
+            friend.set("profession", details.profession);
+            
          });
 
-         this.set("content", activityArr);
+         this.set("content", friend);
+
       }
-   }));
-
-   App.set("notesController", Ember.Object.create({
-      content : [],
-      friendId : null,
-      populate : function(){
-         
-         /***** TODO *******/
-         // GET NOTES ON FRIEND
-
-         /***** TEMPORARY ******/  
-         var note1 = App.Note.create();
-         note1.set("id", 1);
-         note1.set("text", "Meet this guy at the Singly hackathon. He's a node guru.");
-         note1.set("date", "6/1/2012")  ;
-
-         var note2 = App.Note.create();
-         note2.set("id", 2);
-         note2.set("text", "He joined my team!");
-         note2.set("date", "6/1/2012");
-
-         this.set("content", [note1, note2]);
-           
-      }
-
    }));
    /* End Controllers */
 
@@ -273,55 +129,33 @@ $(function() {
    /* States */
    App.stateManager = Ember.StateManager.create({
       rootElement: '#app',
-      initialState: 'authView',
-      authView: Ember.ViewState.create({
-         enter: function(stateManager){
-            this._super(stateManager);
-            App.meController.populate();
-         },
-
-         view: Ember.View.create({
-               templateName: 'auth'
-            })
-      }),
-      pipeView: Ember.ViewState.create({
+      initialState: 'friendView',
+      friendView: Ember.ViewState.create({
          enter: function(stateManager) {
             this._super(stateManager);
-            App.pipeController.populate();
+            App.friendController.populate();
          },
 
          view: Ember.View.create({
-               templateName: 'pipe'
+               templateName: 'friend'
              })
       }),
-      detailsView: Ember.ViewState.create({
+      connectView: Ember.ViewState.create({
          enter: function(stateManager) {
             this._super(stateManager);
-            App.detailsController.populate();
          },
 
          view: Ember.View.create({
-               templateName: 'details'
+               templateName: 'connect'
              })
       }),
-      activityView: Ember.ViewState.create({
+      skipView: Ember.ViewState.create({
          enter: function(stateManager) {
             this._super(stateManager);
-            App.activityController.populate();
          },
 
          view: Ember.View.create({
-               templateName: 'activity'
-             })
-      }),
-      notesView: Ember.ViewState.create({
-         enter: function(stateManager) {
-            this._super(stateManager);
-            App.notesController.populate();
-         },
-
-         view: Ember.View.create({
-               templateName: 'notes'
+               templateName: 'skip'
              })
       })
       

@@ -1,0 +1,35 @@
+
+<script src="/lib/ember-0.9.8.1.js"></script>
+<script src="/utils.js"></script>
+<script src="/app.js"></script>
+
+<div id="app">
+<script type="text/x-handlebars" data-template-name="friend" id="friend">
+	{{#view App.FriendView}}
+		<div id="name">{{friend.fullName}}</div>
+		<div id="notes">{{friend.notes}}</div>
+		<div id="activity">{{friend.activity}}</div>
+		<div id="location">{{friend.location}}</div>
+		<div id="description">{{friend.description}}
+		<div id="profession">{{friend.profession}}</div>
+		<img {{bindAttr src="friend.photo"}} />
+		<span id="connect"><a href="#" {{action "connect"}} class="connectBtn">Connect</a>
+		<span id="skip"><a href="#" {{action "skip"}} class="skipBtn">Skip</a>
+    {{/view}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="connect" id="connect">	
+	<h2>Connect</h2>
+	{{#view App.ConnectView}}
+		 {{services}}
+	{{/view}}
+</script>
+
+<script type="text/x-handlebars" data-template-name="skip" id="skip">
+	<h2>Skip</h2>
+	{{#view App.SkipView}}
+		 
+	{{/view}}
+</script>
+</div>	
+
