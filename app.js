@@ -3,13 +3,13 @@ var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
 var OAuth2 = require('oauth').OAuth2;
-var FastLegS = require('FastLegS');
+var mongoose = require('mongoose');
 
 // Create an HTTP server
 var app = express.createServer();
 var dbconn = {};
 require('./config/environment.js')(app, dbconn, express);
-FastLegS.connect({ user: dbconn.user, password: dbconn.password, database: dbconn.name, host: dbconn.host, port: dbconn.port});
+mongoose.connect('mongodb://localhost/pipe_development');
 
 var apiBaseUrl = process.argv[5] || 'https://api.singly.com';
 
@@ -59,32 +59,37 @@ function getLink(prettyName, profiles, token) {
       prettyName);
 }
 
-var User = FastLegS.Base.extend({
-  tableName: 'users',
-  primaryKey: 'id',
-  _fields: [
-    { 'column_name': 'id' },
-    { 'column_name': 'name' },
-    { 'column_name': 'email' },
-    { 'column_name': 'password' }
-  ]
+// Database models
+var Schema = mongoose.Schema,
+  ObjectId = Schema.ObjectId;
+
+var User = new Schema({
+  name              : { type: String, require: true },
+  password          : { type: String, require: true },
+  email             : { type: String, require: true },
+  email_confirmed   : { type: Boolean, require: true, default: false },
+  created_at        : { type: Date, default: Date.now },
+  modified_at       : { type: Date, default: Date.now },
+  deleted_at        : { type: Date, default: null },
+  last_login        : { type: Date, default: null }
 });
+
+User.pre('save', function(next) {
+  this.set('modified_at', Date.now);
+  next();
+});
+
+mongoose.model('User', User);
 
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');
 
-app.get('/users', function (req, res) {
-  var users = {};
-  res.writeHead(200, {"Content-Type": "text/html"});
-  res.write(JSON.stringify(users));
-  res.end();
-});
-
 app.get('/', function(req, res) {
+  if (process.env.PRELAUNCH == "true") {
    res.writeHead(200, {"Content-Type": "text/html"});
    res.write('<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel="OPKQI452" class="lrdiscoverwidget" data-logo="on" data-background="on" data-share-url="www.getpiped.com" data-css=""></div><script type="text/javascript" src="http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js"></script></body></html>;');
    res.end();
-   /*
+  } else {
    var i;
    var services = [];
 
@@ -100,7 +105,13 @@ app.get('/', function(req, res) {
    res.render('index', {
       services: services,
       session: req.session
-   });*/
+   });
+  }
+});
+
+app.post('/signup', function(req, res) {
+  var user = new User(req.body);
+  user.save();
 });
 
 app.get('/callback', function(req, res) {
