@@ -39,7 +39,8 @@ $(function() {
       profession : null,
       activity : null,
       notes : null,
-      email : null
+      email : null,
+      tagline : null
    });
    /* End Models */
 
@@ -156,17 +157,40 @@ $(function() {
       populate : function(){
 
          var friend = App.Friend.create();
-         $.getJSON('/friend', null, function(details){
-            console.log(details);
+         $.getJSON('/findFriends', null, function(details){
+            console.log("Details for user\n" + details);
 
+            if(details[0]){
+            //LinkedIn
+               friend.set("fullName", details[0].data.firstName + " " + details[0].data.lastName);
+               friend.set("description", (details[0].data.bio) ?  details[0].data.bio : details[0].data.headline);
+               
+               friend.set("photo", details[0].data.pictureUrl);
+               friend.set("location", details[0].data.location.name);
+               friend.set("profession", details[0].data.industry);
+               
+               friend.set("tagline", details[0].data.headline)
+            }
+            // if(details[1]){
+            // //Twitter
+            //    $.getJSON('/getFriend', {"service":"twitter","id":details[1]}, function(twitUser){
+            //       friend.set("activity", twitUser.status);
+            //    });
+            // }
+            if(details[2]){
+            //Facebook
+               $.getJSON('/getFriend', {"service":"facebook","id":details[2]}, function(fbUser){
+                     console.log(fbUser);
+                     friend.set("activity", fbUser.status);
+                     friend.set("profession", fbuser.data.profession);
+               });  
+            }
+            // if(details[3]){
+            // //GContacts
+            //    friend.set("email", details[3]);
+            // }
             
-            friend.set("fullName", details[0].data.firstName + " " + details[0].data.lastName);
-            friend.set("description", details[0].data.headline);
-            friend.set("activity", details[1] && details[1].status);
-            friend.set("photo", details[0].data.pictureUrl);
-            friend.set("location", details[0].data.location.name);
-            friend.set("profession", details[0].data.industry);
-            friend.set("email", details[3]);
+            /*
 
             var services = {
                "one" : "linkedin",
@@ -175,6 +199,7 @@ $(function() {
                "four" : (details[3]) ? "email" : null
             }
             friend.set("services", services);
+            */
             
          });
 

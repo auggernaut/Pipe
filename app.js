@@ -59,7 +59,7 @@ function getLink(prettyName, profiles, token) {
       prettyName.toLowerCase());
 }
 
-function getTwitterUser(screen_name, session){
+function getTwitterUser(screen_name, session, res){
 
    //Get twitter user details
    getProtectedResource('/by/contact/twitter/' + screen_name, session, function(err, item) {
@@ -76,17 +76,18 @@ function getTwitterUser(screen_name, session){
 
       console.log(person);
       
-      return person;
+      res.write(JSON.stringify(person));
+      res.end();
    });
 }
 
 
-function getFacebookUser(id, session){
+function getFacebookUser(id, session, res){
    //Get facebook user details
    getProtectedResource('/by/contact/facebook/' + id, session, function(err, item) {
       var contact = JSON.parse(item)[0]; 
       
-      var person = { 
+      person = { 
          "id" : contact.idr,
          "name" : contact.data.name,
          "username" : contact.data.username,
@@ -98,9 +99,35 @@ function getFacebookUser(id, session){
       
       console.log(person);
 
-      return person;
+      res.write(JSON.stringify(person));
+      res.end();
       
    });
+}
+
+function getAccountIds(contacts)
+{
+
+   var pLinkedIn;
+   var pTwitter;
+   var pFacebook;
+   var pGContacts;
+
+   if(contacts.length > 1) {
+      for(var i = 0; i < contacts.length; i++){
+         if(contacts[i].idr.indexOf("twitter") != -1){
+            pTwitter = contacts[i].data.user.screen_name;
+         }
+         else if(contacts[i].idr.indexOf("facebook") != -1){
+            pFacebook = contacts[i].data.id
+         }
+         else if(contacts[i].idr.indexOf("gcontacts") != -1)
+            pGContacts = contacts[i].data.gd$email && contacts[i].data.gd$email[0].address;
+         //console.log(a[a.length]);
+      }
+   }
+
+   return [pLinkedIn, pTwitter, pFacebook, pGContacts];
 }
 
 /*
@@ -130,26 +157,24 @@ app.set('view engine', 'ejs');
 
 app.get('/user', function (req, res) {
   var users = {};
-  res.writeHead(200, {"Content-Type": "text/html"});
+  //res.writeHead(200, {"Content-Type": "text/html"});
   res.write(JSON.stringify(users));
   res.end();
 });
 
+app.get('/findFriends', function(req, res) {
 
-app.get('/friend', function(req, res) {
-
-   //IF DEVELOPMENT
+//IF DEVELOPMENT
    if (process.env.NODE_ENV != 'production')
    {
       console.log(req.session);
-      if(!req.session.pIndex)
+      /*if(!req.session.pIndex)
          req.session.pIndex = 0;
       else
          req.session.pIndex = req.session.pIndex + 1;
-      
-      var myFriends = ["lQEya8Lw1c"];
+      */
 
-      console.log(myFriends[req.session.pIndex]);
+      var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
          if (lin === undefined) {
@@ -157,36 +182,18 @@ app.get('/friend', function(req, res) {
             return;
          }
          console.log(lin);
-         var a = [];
+         //var a = [];
 
-         a[0] = JSON.parse(lin)[0];
+         pLinkedIn = JSON.parse(lin)[0];
 
-         var name =  a[0].data.firstName + "%20" + a[0].data.lastName;
+         var name =  pLinkedIn.data.firstName + "%20" + pLinkedIn.data.lastName;
          
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
-
-            var cc = JSON.parse(contacts);
-            console.log("---" + cc.length);
-            if(cc.length > 1) {
-               for(var i = 0; i < cc.length; i++){
-                  if(cc[i].idr.indexOf("twitter") != -1){
-                     a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session);
-
-                  }
-                  else if(cc[i].idr.indexOf("facebook") != -1){
-                     a[2] = getFacebookUser(cc[i].data.id, req.session);
-                     found = true;
-                  }
-                  else if(cc[i].idr.indexOf("gcontacts") != -1)
-                     a[3] = cc[i].data.gd$email && cc[i].data.gd$email[0].address;
-
-                  //console.log(a[a.length]);
-               }
-
-            }
-
-            res.write(JSON.stringify(a));
-            res.end();
+            var ids = getAccountIds(JSON.parse(contacts));  
+            ids[0] = pLinkedIn;          
+            res.write(JSON.stringify(ids));
+            res.end(); 
+            
          });
       });
    }
@@ -204,65 +211,63 @@ app.get('/friend', function(req, res) {
          
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
 
-            var cc = JSON.parse(contacts);
-            console.log("---" + cc.length);
-            if(cc.length > 1) {
-
-               for(var i = 0; i < cc.length; i++){
-                  if(cc[i].idr.indexOf("twitter") != -1){
-                     a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session); 
-                     
-                  }
-                  else if(cc[i].idr.indexOf("facebook") != -1){
-                     a[2] = getFacebookUser(cc[i].data.id, req.session);
-                     found = true;
-                  }
-                  else if(cc[i].idr.indexOf("gcontacts") != -1)
-                     a[3] = cc[i].data.gd$email && cc[i].data.gd$email[0].address;
-
-                  //console.log(a[a.length]);
-               }
-
-            }
-
-            res.write(JSON.stringify(a));
+            var ids = getAccountIds(JSON.parse(contacts));
+            ids[0] = linContact;            
+            res.write(JSON.stringify(ids));
             res.end(); 
-
          });
       });
    }
+});
 
-   //console.log(a);
+app.get('/getFriend', function(req, res) {
+
+   var service = req.param('service');
+   var id = req.param('id');
+
+   console.log("------" + service + "-------" + id);
+
+   if(service.indexOf("twitter") != -1){
+      getTwitterUser(id, req.session, res);
+   }
+   else if(service.indexOf("facebook") != -1){
+      getFacebookUser(id, req.session, res);
+   }
+   //else if(service.indexOf("linkedin") != -1){
+   //   res.write(JSON.stringify(getLinkedInUser(id, req.session)));
+   //   res.end(); 
+   //}
+      //console.log(a);
 });
 
 
 
-/*
+
 app.get('/', function(req, res) {
-   res.render('splash', {session: req.session});
-});
-  */
-
-app.get('/', function(req, res){
    if (process.env.PRELAUNCH) {
       res.writeHead(200, {"Content-Type": "Text/Html"});
       res.write("<!DOCTYPE html><html><head><title>Pipe</title></head><body><div rel=\"OPKQI452\" class=\"lrdiscoverwidget\" data-logo=\"on\" data-background=\"on\" data-share-url=\"www.pipeapp.co\" data-css=\"\"></div><script type=\"text/javascript\" src=\"http://launchrock-ignition.s3.amazonaws.com/ignition.1.1.js\"></script></body></html>;");
       res.write("<script type=\"text/javascript\">" +
 
-      "var _gaq = _gaq || [];" +
-      "_gaq.push(['_setAccount', 'UA-32357176-1']);" +
-      "_gaq.push(['_trackPageview']);" +
+         "var _gaq = _gaq || [];" +
+         "_gaq.push(['_setAccount', 'UA-32357176-1']);" +
+         "_gaq.push(['_trackPageview']);" +
 
-      "(function() {" +
-      "   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;" +
-      "   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';" +
-      "   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);" +
-      "})();" +
+         "(function() {" +
+         "   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;" +
+         "   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';" +
+         "   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);" +
+         "})();" +
 
-      "</script>");
+         "</script>");
       res.end();
       return;
+   } else {
+      res.render('splash', {session: req.session});
    }
+});
+
+app.get('/auth', function(req, res){
    var i;
    var services = [];
 
@@ -316,7 +321,7 @@ app.get('/callback', function(req, res) {
 
          req.session.profiles = profilesBody;
 
-         res.redirect('/');
+         res.redirect('/auth');
       });
    });
 });
