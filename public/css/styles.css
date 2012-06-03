@@ -130,6 +130,25 @@
       div#live div#text {
       	padding-top:5px;
       }
+      form#contact textarea {
+      width:90%;
+      height:100px;
+      margin:5px 0 10px 0;
+      }
+      form#contact {
+      }
+      div#sendviatext {
+      float:left;
+      width:120px;
+      height:30px;
+      padding-top:15px;
+      }
+      div#sendsocialnetworks {
+      float:left;
+      width:150px;
+      }
+      
+      
       
       /*
       div#birds {

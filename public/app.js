@@ -67,59 +67,54 @@ $(function() {
 
    App.ConnectView = Ember.View.extend({
       friendBinding : 'App.friendController.content',
+      servicesBinding : 'App.friendController.services',
       send : function(evt) {
-         App.activityController.set('friendId', this.get('content').id);
-         //alert($("#messageText").val());
-
-         if(App.friendController.connectVia == "linkedin")
-         {
-            singly.post('/proxy/linkedin/people/~/mailbox', {
+         switch (App.friendController.get("connectVia")) {
+            case "twitter":
+               sendLinkedIn(evt);
+               break;
+         }
+      },
+      sendMail : function(evt) {
+         //App.activityController.set('friendId', this.get('content').id);
+         App.friendController.set("alert", this.get('friend').services['linkedin']);
+         App.stateManager.goToState('friendView');
+      },
+      sendLinkedIn : function(evt){
+         singly.post('/proxy/linkedin/people/~/mailbox', {
                "recipients": {
                   "values": [
                      {
                         "person": {
-                           "_path": "/people/" + friendId,
+                           "_path": "/people/" + this.get('friend').services['linkedin'],
                         }
                      }
                   ]
                },
                "subject": "Catching up through Pipe!",
-               "body": "Would love to catch up again."
+               "body": $("#messageText").val() + ""
             }, function(data, textStatus, jqXHR) {
-               App.friendController.set("alert", "Message Sent!");
+               App.friendController.set("alert", "LinkedIn message sent!");
                App.stateManager.goToState('friendView');
             });
-         }
-
-         if (App.friendController.connectVia == "twitter")
-         {
-            singly.post('/proxy/twitter/direct_messages/new.json', {
-               "screen_name": "surgemd",
-               "text": "Test message"
+      },//alert($("#messageText").val());
+      sendTwitter : function(evt){
+         twitter.post('/proxy/twitter/account/verify_credentials', {
+               //"screen_name": this.get('friend').services['twitter'],
+               //"text": $("#messageText").val()
             }, function(data, textStatus, jqXHR) {
-               App.friendController.set("alert", "Message sent!");
+               App.friendController.set("alert", "Twitter message sent!");
                App.stateManager.goToState('friendView');
             });
-         }
-
-         App.friendController.set("alert", "Message Sent!");
-         App.stateManager.goToState('friendView');
       },
-      selectOne : function(evt) {
-         $("#subject").css("display", "none");
+      selectMail : function(evt) {
+         App.friendController.set("connectVia", "mail");
+      },
+      selectLinkedIn : function(evt) {
          App.friendController.set("connectVia", "linkedin");
       },
-      selectTwo : function(evt) {
-         $("#subject").css("display", "none");
+      selectTwitter : function(evt) {
          App.friendController.set("connectVia", "twitter");
-      },
-      selectThree : function(evt) {
-         $("#subject").css("display", "none");
-         App.friendController.set("connectVia", "facebook");
-      },
-      selectFour : function(evt) {
-         $("#subject").css("display", "inline");
-         App.friendController.set("connectVia", "email");
       }
    });
 
@@ -177,8 +172,10 @@ $(function() {
             if(details[1]){
             //Twitter
                $.getJSON('/getFriend', {"service":"twitter","id":details[1]}, function(twitUser){
-                  friend.set("activity", twitUser.status);
-                  servArr["twitter"] = twitUser.username;
+                  var jTwit = JSON.parse(twitUser);
+                  friend.set("activity", jTwit.status);
+                  console.log("twitter " + jTwit.twitUser);
+                  servArr["twitter"] = jTwit.username;
                   friend.set("services", servArr);
                });
             }
