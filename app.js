@@ -174,7 +174,7 @@ app.get('/findFriends', function(req, res) {
          req.session.pIndex = req.session.pIndex + 1;
       */
 
-      var myFriends = ["QlNyTOIv-M", "lQEya8Lw1c", "bRXYeusKYv"];
+      var myFriends = ["lQEya8Lw1c", "QlNyTOIv-M"];
 
       getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
          if (lin === undefined) {
@@ -200,7 +200,7 @@ app.get('/findFriends', function(req, res) {
    }
    else
    {
-      getProtectedResource('/services/linkedin/connections', req.session, function(err, lin){
+      getProtectedResource('/services/linkedin/connections?offset='+c[Math.floor(Math.random()*c.length)], req.session, function(err, lin){
          //console.log(statuses); 
          
          var a = [];

@@ -83,7 +83,7 @@ $(function() {
                      }
                   ]
                },
-               "subject": "Hi Bob",
+               "subject": "Catching up through Pipe!",
                "body": "Would love to catch up again."
             }, function(data, textStatus, jqXHR) {
                App.friendController.set("alert", "Message Sent!");
@@ -93,7 +93,7 @@ $(function() {
 
          if (App.friendController.connectVia == "twitter")
          {
-            singly.post('/twitter/direct_messages/new.format', {
+            singly.post('/proxy/twitter/direct_messages/new.json', {
                "screen_name": "surgemd",
                "text": "Test message"
             }, function(data, textStatus, jqXHR) {
@@ -102,8 +102,7 @@ $(function() {
             });
          }
 
-         //App.friendController.set("alert", "Message Sent!");
-         App.friendController.set("alert", "Stuff");//App.friendController.connectVia);
+         App.friendController.set("alert", "Message Sent!");
          App.stateManager.goToState('friendView');
       },
       selectOne : function(evt) {
