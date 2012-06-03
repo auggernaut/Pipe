@@ -139,33 +139,36 @@ app.get('/user', function (req, res) {
 
 app.get('/friend', function(req, res) {
 
-   req.session.pIndex = req.session.pIndex + 1;
-   console.log(req.session.pIndex);
-   
-
    //IF DEVELOPMENT
    if (process.env.NODE_ENV != 'production')
    {
-
+      console.log(req.session);
+      if(!req.session.pIndex)
+         req.session.pIndex = 0;
+      else
+         req.session.pIndex = req.session.pIndex + 1;
+      
       var myFriends = ["jEx8fWMs6m", "7008380"];
 
       console.log(myFriends[req.session.pIndex]);
 
-      getProtectedResource('/by/contact/linkedin/' + myFriends[req.session.pIndex], req.session, function(err, item) {
-         if (err && err.statusCode) {
-            console.log("there was a firefight!");
-            res.write("Error");
-            res.end();
+      getProtectedResource('/by/contact/linkedin/' + myFriends[Math.floor(Math.random()*myFriends.length)], req.session, function(err, lin) {
+         if (lin === undefined) {
+            res.redirect('auth');
             return;
          }
-         var name =  item.data.firstName + "%20" + item.data.lastName;
+         console.log(lin);
+         var a = [];
 
+         a[0] = JSON.parse(lin)[0];
+
+         var name =  a[0].data.firstName + "%20" + a[0].data.lastName;
+         
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
 
             var cc = JSON.parse(contacts);
             console.log("---" + cc.length);
             if(cc.length > 1) {
-
                for(var i = 0; i < cc.length; i++){
                   if(cc[i].idr.indexOf("twitter") != -1){
                      a[1] = getTwitterUser(cc[i].data.user.screen_name, req.session);
@@ -235,11 +238,13 @@ app.get('/friend', function(req, res) {
 
 
 
+/*
 app.get('/', function(req, res) {
    res.render('splash', {session: req.session});
 });
-   
-app.get('/auth', function(req, res){
+  */
+
+app.get('/', function(req, res){
    var i;
    var services = [];
 
@@ -293,7 +298,7 @@ app.get('/callback', function(req, res) {
 
          req.session.profiles = profilesBody;
 
-         res.redirect('/auth');
+         res.redirect('/');
       });
    });
 });

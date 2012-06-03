@@ -1,6 +1,5 @@
 // Pick a secret to secure your session storage
 var sessionSecret = '42';
-var personIndex = 0;
 
 module.exports = function(app, dbconn, express) {
   // Setup for the express web framework
@@ -27,8 +26,7 @@ module.exports = function(app, dbconn, express) {
      dbconn.user = 'pipe_development';
      dbconn.password = '04efjw0328j038j2f';
      app.use(express.session({
-        secret: sessionSecret,
-        pIndex: personIndex
+        secret: sessionSecret
      }));
   });
 

@@ -70,7 +70,6 @@ $(function() {
          //App.activityController.set('friendId', this.get('content').id);
          //alert($("#messageText").val());
 
-/*
          if(App.friendController.connectVia == "linkedin")
          {
             $.post('http://api.linkedin.com/v1/people/~/mailbox',
@@ -79,7 +78,7 @@ $(function() {
                   "values": [
                   {
                      "person": {
-                        "_path": "/people/" + person_id
+                        "_path": "/people/~", // + person_id
                      }
                   }
                   ]
@@ -87,13 +86,16 @@ $(function() {
                "subject": "Hi Bob",
                "body": "Would love to catch up again."
             }
-            , function(data, textStatus, jqXHR) { 
+            , function(data, textStatus, jqXHR) {
+               console.log(data);
+               console.log(textStatus);
                App.friendController.set("alert", "Message Sent!");
                App.stateManager.goToState('friendView');
             }, 'json')
          }
-*/
-         App.friendController.set("alert", "Message Sent!");
+
+         //App.friendController.set("alert", "Message Sent!");
+         App.friendController.set("alert", "Stuff");//App.friendController.connectVia);
          App.stateManager.goToState('friendView');
       },
       selectOne : function(evt) {
