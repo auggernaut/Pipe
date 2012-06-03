@@ -43,7 +43,7 @@ function getLink(prettyName, profiles, token) {
    // If the user has a profile authorized for this service
    if (profiles && profiles[service] !== undefined) {
       // Return a unicode checkmark so that the user doesn't try to authorize it again
-      return sprintf('<a href="%s/services/%s?access_token=%s" class="activated"><img style="margin-right:10px;" src="img/social_networks/%s_blue.png" alt="Pipe" width="46" height="46" /></a>', apiBaseUrl, service, token, prettyName);
+      return sprintf('<a href="%s/services/%s?access_token=%s" class="activated"><img style="margin-right:10px;" src="img/social_networks/%s_blue.png" alt="Pipe" width="46" height="46" /></a>', apiBaseUrl, service, token, prettyName.toLowerCase());
    }
 
    // This flow is documented here: http://dev.singly.com/authorization
