@@ -60,7 +60,7 @@ function getLink(prettyName, profiles, token) {
       prettyName);
 }
 
-function getTwitterUser(screen_name, session){
+function getTwitterUser(screen_name, session, res){
 
    //Get twitter user details
    getProtectedResource('/by/contact/twitter/' + screen_name, session, function(err, item) {
@@ -83,7 +83,7 @@ function getTwitterUser(screen_name, session){
 }
 
 
-function getFacebookUser(id, session){
+function getFacebookUser(id, session, res){
    //Get facebook user details
    getProtectedResource('/by/contact/facebook/' + id, session, function(err, item) {
       var contact = JSON.parse(item)[0]; 
@@ -227,10 +227,10 @@ app.get('/getFriend', function(req, res) {
    console.log("------" + service + "-------" + id);
 
    if(service.indexOf("twitter") != -1){
-      getTwitterUser(id, req.session);
+      getTwitterUser(id, req.session, res);
    }
    else if(service.indexOf("facebook") != -1){
-      getFacebookUser(id, req.session);
+      getFacebookUser(id, req.session, res);
    }
    //else if(service.indexOf("linkedin") != -1){
    //   res.write(JSON.stringify(getLinkedInUser(id, req.session)));
