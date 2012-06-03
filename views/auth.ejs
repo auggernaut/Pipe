@@ -1,0 +1,31 @@
+<script type="text/javascript">
+		if (accessToken === 'undefined' ||
+            accessToken === undefined) {
+            $('#authMessage').css('display', 'block');
+        	$('#startApp').css('enabled', 'false');
+         }
+         else
+         {
+         	$('#authMessage').css('display', 'none');
+        	$('#startApp').css('enabled', 'true');
+         }
+</script>
+
+<div id="auth">
+	<p>Register with one or more of these services:</p>
+	<ul>
+		<% for (var i = 0; i < services.length; i++) { %>
+	 		<li id="<%= services[i].name %>"><%- services[i].link %></li>
+		<% } %>
+	</ul>
+	<div id="empowered">
+		<a href="http://singly.com/"><img src="/empowered.png" /></a>
+	</div>
+
+			<p>Access Token: <%= session.access_token %>
+			</p>
+	
+		<a href="/pipe" id="startApp"><strong>Start</strong></a>
+
+		<div id="authMessage">Please authenticate with a service provider.</div>
+</div>
