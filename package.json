@@ -8,8 +8,8 @@
       "querystring": "*",
       "request": "*",
       "sprintf": "*",
-      "pg": "0.6.x",
-      "sequelize": "1.3.x"
+      "mongodb": "*",
+      "mongoose": "*"
    },
    "engines": {
      "node": "0.6.x"

@@ -5,8 +5,6 @@ var sprintf = require('sprintf').sprintf;
 var OAuth2 = require('oauth').OAuth2;
 var sessionSecret = '42';
 
-//var Sequelize = require('sequelize');
-
 // Create an HTTP server
 var app = express.createServer();
 app.configure(function() {
@@ -71,7 +69,6 @@ function getLink(prettyName, profiles, token) {
       queryString,
       prettyName);
 }
-
 
 // Use ejs instead of jade because HTML is easy
 app.set('view engine', 'ejs');

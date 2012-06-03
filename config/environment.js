@@ -37,12 +37,13 @@ module.exports = function(app, dbconn, express) {
      app.hostBaseUrl = process.argv[4] || 'http://www.getpiped.com';
      var database_url = process.env.SHARED_DATABASE_URL;
      database_url = database_url.split('postgres://');
-     var result = database_url.split(':');
-     db.user = result[0];
+     var result = database_url[1].split(':');
+     dbconn.user = result[0];
      result = result[1].split('@');
-     db.password = result[0];
+     dbconn.password = result[0];
      result = result[1].split('/');
-     db.host = result[0];
-     db.name = result[1];
+     dbconn.host = result[0];
+     dbconn.name = result[1];
+     dbconn.port = 5432;
   });
 };
