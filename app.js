@@ -17,14 +17,14 @@ var clientId = process.argv[2] || 'a1ff7be4edd14f5d7ad918e0ac12aed0';
 var clientSecret = process.argv[3] || '67dd7798cced0614ba88ebad7386f6b4';
 
 var usedServices = [
-   'Facebook',
+   //'Facebook',
    //'foursquare',
    //'Instagram',
    //'Tumblr',
-   'Twitter',
+   //'Twitter',
    'LinkedIn',
    //'FitBit',
-   'GContacts'
+   //'GContacts'
 ];
 
 var oa = new OAuth2(clientId, clientSecret, apiBaseUrl);
