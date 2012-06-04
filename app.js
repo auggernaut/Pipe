@@ -205,6 +205,8 @@ app.get('/findFriends', function(req, res) {
          //console.log(statuses); 
          
          var a = [];
+         if (line == undefined)
+            return;
          var c = JSON.parse(lin);
 
          var linContact = a[0] = c[Math.floor(Math.random()*c.length)];
