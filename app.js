@@ -205,7 +205,7 @@ app.get('/findFriends', function(req, res) {
          //console.log(statuses); 
          
          var a = [];
-         if (line == undefined)
+         if (lin == undefined)
             return;
          var c = JSON.parse(lin);
 
