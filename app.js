@@ -67,13 +67,13 @@ function getTwitterUser(screen_name, session, res){
       var contact = JSON.parse(item)[0]; 
       
       var person = { 
-         "id" : contact.idr,
-         "name" : contact.data.name,
-         "username" : (contact.data.screen_name) ? contact.data.screen_name : "",
-         "description" : (contact.data.description) ? contact.data.description : "",
-         "location" : contact.data.location,
-         "status" : contact.data.status && contact.data.status.text,
-         "photo" : contact.data.profile_image_url };
+         "id" : contact.idr ? contact.idr : "",
+         "name" : contact.data ? (contact.data.name ? contact.data.name : "") : "",
+         "username" : contact.data ? ((contact.data.screen_name) ? contact.data.screen_name : "") : "",
+         "description" : contact.data ? ((contact.data.description) ? contact.data.description : "") : "",
+         "location" : contact.data ? (contact.data.location ? contact.data.location : "") : "",
+         "status" : contact.data ? (contact.data.status && contact.data.status.text) : "",
+         "photo" : contact.data ? (contact.data.profile_image_url ? contact.data.profile_image_url : "") : "" };
 
       console.log("twitter - " + JSON.stringify(person));
       
@@ -86,17 +86,17 @@ function getTwitterUser(screen_name, session, res){
 function getFacebookUser(id, session, res){
    //Get facebook user details
    getProtectedResource('/by/contact/facebook/' + id, session, function(err, item) {
-      var contact = JSON.parse(item)[0]; 
+      var contact = JSON.parse(item)[0];
       
       var person = { 
-         "id" : contact.idr,
-         "name" : contact.data.name,
-         "username" : contact.data.username,
-         "description" : (contact.data.bio) ? contact.data.bio : contact.data.quotes,
-         "location" : contact.data.location && contact.data.location.name,
+         "id" : contact.idr ? contact.idr : "",
+         "name" : contact.data ? (contact.data.name ? contact.data.name : "") : "",
+         "username" : contact.data ? (contact.data.username ? contact.data.username : "") : "",
+         "description" : contact.data ? ((contact.data.bio) ? contact.data.bio : contact.data.quotes ? contact.data.quotes : "") : "",
+         "location" : contact.data ? (contact.data.location && contact.data.location.name) : "",
          //"status" : (rStatus.data.message) ? rStatus.data.message : rStatus.data.story,
          "photo" : contact.oembed.thumbnail_url,
-         "profession" : contact.data.work && contact.data.work[0].employer.name };
+         "profession" : contact.data ? (contact.data.work && contact.data.work[0].employer.name) : "" };
       
       console.log("facebook --" + person);
 
