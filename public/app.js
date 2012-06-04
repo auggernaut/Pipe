@@ -263,6 +263,7 @@ $(function() {
          enter: function(stateManager) {
             this._super(stateManager);
             App.friendController.populate();
+            $('body').addClass('feed');
          },
 
          view: Ember.View.create({
@@ -272,6 +273,7 @@ $(function() {
       connectView: Ember.ViewState.create({
          enter: function(stateManager) {
             this._super(stateManager);
+            $('body').addClass('feed');
          },
 
          view: Ember.View.create({
@@ -281,6 +283,7 @@ $(function() {
       skipView: Ember.ViewState.create({
          enter: function(stateManager) {
             this._super(stateManager);
+            $('body').addClass('feed');
          },
 
          view: Ember.View.create({
