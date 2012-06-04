@@ -211,7 +211,7 @@ app.get('/findFriends', function(req, res) {
 
          var linContact = a[0] = c[Math.floor(Math.random()*c.length)];
          
-         var name =  linContact.data.firstName + "%20" + linContact.data.lastName;
+         var name = (linContact && linContact.data) ? (linContact.data.firstName ? linContact.data.firstName : "") + "%20" + (linContact.data.lastName ? linContact.data.lastName : "") : "";
          
          getProtectedResource('/types/contacts?q=' + name, req.session, function(err, contacts){
 
