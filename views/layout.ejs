@@ -65,6 +65,12 @@ $(document).ready(function() {
   $('#continue').click(function() {
     mixpanel.track('continue');
   });
+  $('#howlong-forever').click(function() {
+    mixpanel.track('skip-dont-show');
+  });
+  $('#howlong-temporarily').click(function() {
+    mixpanel.track('skip-showlater');
+  });
 });
 </script>
   </head>

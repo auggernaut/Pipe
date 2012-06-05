@@ -60,10 +60,12 @@ $(function() {
          if ($('#name').html().split('</script>')[1].split('<script')[0] == " ")
             return;
          App.stateManager.goToState('connectView');
+         mixpanel.track('connect clicked');
       },
       skip : function(evt) {
          //App.activityController.set('friendId', this.get('content').id);
          App.stateManager.goToState('skipView');
+         mixpanel.track('skip clicked');
       }
    });
 
@@ -87,6 +89,7 @@ $(function() {
          //App.activityController.set('friendId', this.get('content').id);
          App.friendController.set("alert", this.get('friend').services['linkedin']);
          App.stateManager.goToState('friendView');
+         mixpanel.track('mail-sent');
       },
       sendLinkedIn : function(evt){
          singly.post('/proxy/linkedin/people/~/mailbox', {
@@ -105,6 +108,7 @@ $(function() {
                App.friendController.set("alert", "LinkedIn message sent!");
                App.stateManager.goToState('friendView');
             });
+         mixpanel.track('linkedin sent');
       },
       sendTwitter : function(evt){
          console.log(this.get('friend'));
@@ -117,6 +121,7 @@ $(function() {
                App.friendController.set("alert", "Twitter message sent!");
                App.stateManager.goToState('friendView');
             });
+         mixpanel.track('twitter sent');
       },
       selectMail : function(evt) {
          App.friendController.set("connectVia", "mail");
@@ -124,6 +129,7 @@ $(function() {
          $('#mail').attr('src','img/social_networks/gcontacts_blue.png');
          $('#linkedin').attr('src', 'img/social_networks/linkedin_grey.png');
          $('#twitter').attr('src', 'img/social_networks/twitter_grey.png');
+         mixpanel.track('mail selected');
       },
       selectLinkedIn : function(evt) {
          App.friendController.set("connectVia", "linkedin");
@@ -131,6 +137,7 @@ $(function() {
          $('#mail').attr('src','img/social_networks/gcontacts_grey.png');
          $('#linkedin').attr('src', 'img/social_networks/linkedin_blue.png');
          $('#twitter').attr('src', 'img/social_networks/twitter_grey.png');
+         mixpanel.track('linkedin selected');
       },
       selectTwitter : function(evt) {
          App.friendController.set("connectVia", "twitter");
@@ -138,6 +145,7 @@ $(function() {
          $('#mail').attr('src','img/social_networks/gcontacts_grey.png');
          $('#linkedin').attr('src', 'img/social_networks/linkedin_grey.png');
          $('#twitter').attr('src', 'img/social_networks/twitter_blue.png');
+         mixpanel.track('twitter selected');
       }
    });
 

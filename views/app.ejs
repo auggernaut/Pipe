@@ -147,13 +147,13 @@
 	    	<form id="contact">
 	    		<p style="text-align:left;">Do you want us to delete this person from your Pipe permanently?</p>
 	    		<div id="radios">
-			    	<input type="radio" name="howlong" value="forever" /> Yes, I never want to contact this person<br />
-			    	<input type="radio" name="howlong" value="temporarily" /> No, show me this person again later<br />
+			    	<input type="radio" name="howlong" value="forever" id="howlong_forever" /> <label for="howlong_forever">Yes, I never want to contact this person</label><br />
+			    	<input type="radio" name="howlong" value="temporarily" id="howlong_temporarily" /> <label for="howlong_temporarily">No, show me this person again later</label><br />
 	    		</div>
 	  
 	  	    	<div style="clear:both"></div>
 	    	
-		    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" {{action "submit"}} />
+		    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" onclick="mixpanel.track('skip-submit');" {{action "submit"}} />
 		    		
 	    	</form>
 	    	

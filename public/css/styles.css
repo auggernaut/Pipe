@@ -299,3 +299,7 @@
       img.startitup {padding-top:5px}
       
 }
+
+label {
+    display:inline;
+}
