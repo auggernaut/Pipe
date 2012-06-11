@@ -71,21 +71,25 @@
     <!-- end Mixpanel -->
   </head>
 
-  <body class="firstLogin">
-    <%- body %>
-  </body>
+ <body class="firstLogin">
+  <%- body %>
+    </body>
+    <footer>
+<!--        <hr>
+        <div class="container hidden-phone" style="text-align:center;">
+            <a href="/about">About Us</a>
+        </div>-->
+ <!--<span class="span2 offset3">Powered with<a href="http://mixpanel.com/f/partner"><img src="http://mixpanel.com/site_media/images/partner/badge_blue.png" alt="Real Time Web Analytics" /></a></span>-->
+        <script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-32357176-1']);
+_gaq.push(['_trackPageview']);
 
-  <footer>
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-32357176-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-  </footer>
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+        </script>
+    </footer>
 </html>
