@@ -3,15 +3,10 @@ var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
 
-
-
-
 // Create an HTTP server
 var app = express.createServer();
 require('./config/environment.js')(app, express);
 app.set('view engine', 'ejs');
-
-
 
 //*************************************
 //HOME
