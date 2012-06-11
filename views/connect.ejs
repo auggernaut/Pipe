@@ -1,0 +1,66 @@
+
+
+<div class="container">
+	<div id="desktopcontainer">
+		<a href="/pipe"><h1 id="name" class="back">{{friend.fullName}}</h1></a>	
+		<div id="divider" class="nodesktop"></div>
+				
+		<form id="contact">
+		    <input type="text" maxlength="150" id="subject" value="Enter a subject here ..." style="width:400px;display:none;"/>
+			<textarea id="messageText">Enter a message here ...</textarea>
+
+			<div id="sendvia">
+				<div id="sendviatext">
+				Send via:
+				</div>
+				<div id="sendsocialnetworks">
+				    <a href="#" {{action "selectMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
+					<a href="#" {{action "selectLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png"width="46" heigh="46" /></a>
+					<a href="#" {{action "selectTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
+					</a>
+				</div>
+			</div>
+			<div style="clear:both"></div>	
+			<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" {{action "send"}} />
+		</form>
+
+		<div id="info">
+			<div id="about">
+				<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.description}}
+		    		</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+			<div id="divider"></div>
+			
+			<div id="work">
+				<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.profession}}
+		    		</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+			<div id="divider"></div>
+			
+			<div id="live">
+				<div id="container">
+		    		<div id="icon">
+		    		</div>
+		    		<div id="text">
+		    			{{friend.location}}
+		    		</div>
+				</div>
+			</div>
+			<div style="clear:both"></div>
+			<div id="divider"></div>
+		</div>  
+	</div>
+</div>
+	

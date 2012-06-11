@@ -4,94 +4,88 @@
   <head>
     <meta charset="utf-8">
     <title>Pipe - Reconnect with your network</title>
-   <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-   <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="description" content="Pipe makes it easy to reconnect with your network, one person at a time.">
     <!-- Le styles -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
-    <!-- Le Header Javascript -->
-  <script type="text/javascript" src="js/scripts.js"> </script>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap-responsive.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="img/favicon.ico">
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="72x72" href="img/apple-touch-icon-72x72.png">
     <link rel="apple-touch-icon" sizes="114x114" href="img/apple-touch-icon-114x114.png">
+
+    <!-- Le Header Javascript -->
+    <script type="text/javascript" src="js/scripts.js"> </script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    <script type="text/javascript" src="/lib/sprintf-0.7-beta1.js"></script>
+    <script type="text/javascript" src="/lib/underscore-min.js"></script>
+
+    
     <script>
-    function getUrlVars() {
-    var vars = {};
-    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-        vars[key] = value;
-    });
-    return vars;
-  }
+      var accessToken = '<%= session.access_token %>';
 
-    urlVar = getUrlVars()["mobile"];
+      function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+      }
+
+      urlVar = getUrlVars()["mobile"];
       function init(){
-      if((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i)))
-        {}
-    else {
-        //if (urlVar == "mobile"){}
-      //else {window.location = "http://www.getgaggle.com/desktop/";}
-    }}
-    window.onload = init;
-  </script>
+        if((navigator.userAgent.match(/iPhone/i)) || (navigator.userAgent.match(/iPod/i))){
 
-   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+        }
+        else {
+            //if (urlVar == "mobile"){}
+            //else {window.location = "http://www.getgaggle.com/desktop/";}
+        }
+      }
+      window.onload = init;
+    </script>
+    <!-- start Mixpanel -->
+    <script type="text/javascript">
+      (function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";
+      a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+
+      '//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];
+      b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;
+      "undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g=['disable','track','track_pageview',
+      'track_links','track_forms','register','register_once','unregister','identify',
+      'name_tag','set_config'];
+      for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(
+      Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c}
+      )(document,[]);
+      mixpanel.init("c35e203054f93afcdb1176578c36b563");
 
-  <script src="/lib/sprintf-0.7-beta1.js"></script>
-  <script src="/lib/underscore-min.js"></script>
-  
-
-  <script>
-   var accessToken = '<%= session.access_token %>';
-  </script>
- <!-- start Mixpanel -->
- <script type="text/javascript">
-    (function(d,c){var a,b,g,e;a=d.createElement("script");a.type="text/javascript";
-    a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+
-    '//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];
-    b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){var b=c;
-    "undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g=['disable','track','track_pageview',
-    'track_links','track_forms','register','register_once','unregister','identify',
-    'name_tag','set_config'];
-    for(e=0;e<g.length;e++)(function(a){b[a]=function(){b.push([a].concat(
-    Array.prototype.slice.call(arguments,0)))}})(g[e]);c._i.push([a,d,f])};window.mixpanel=c}
-    )(document,[]);
- mixpanel.init("c35e203054f93afcdb1176578c36b563");</script><!-- end Mixpanel -->
-<script type="text/Javascript">
-$(document).ready(function() {
-  $('#continue').click(function() {
-    mixpanel.track('continue');
-  });
-  $('#howlong-forever').click(function() {
-    mixpanel.track('skip-dont-show');
-  });
-  $('#howlong-temporarily').click(function() {
-    mixpanel.track('skip-showlater');
-  });
-});
-</script>
+      $(document).ready(function() {
+        $('#continue').click(function() { mixpanel.track('continue'); });
+        $('#howlong-forever').click(function() { mixpanel.track('skip-dont-show'); });
+        $('#howlong-temporarily').click(function() { mixpanel.track('skip-showlater');});
+      });
+    </script>
+    <!-- end Mixpanel -->
   </head>
 
- <body class="firstLogin">
-  <%- body %>
- </body>
- <footer>
- <span class="span2 offset3">Powered with<a href="http://mixpanel.com/f/partner"><img src="http://mixpanel.com/site_media/images/partner/badge_blue.png" alt="Real Time Web Analytics" /></a></span>
- <script type="text/javascript">
+  <body class="firstLogin">
+    <%- body %>
+  </body>
 
- var _gaq = _gaq || [];
- _gaq.push(['_setAccount', 'UA-32357176-1']);
- _gaq.push(['_trackPageview']);
+  <footer>
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-32357176-1']);
+      _gaq.push(['_trackPageview']);
 
- (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
- })();
-
- </script>
- </footer>
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </footer>
 </html>
