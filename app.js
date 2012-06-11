@@ -384,7 +384,7 @@ function mapChum(contact){
             "status" : contact.data.status && contact.data.status.text ? contact.data.status.text : "",
             "meta" : contact.data.description ? contact.data.description : "",
             "location" : contact.data.location && contact.data.location.name ? contact.data.location.name : "",
-            "profession" : contact.data.positions && contact.data.positions.values && contact.data.positions.values[0].company && contact.data.positions.values[0].company.name ? contact.data.positions.values[0].company.name : ""
+            "profession" : contact.data.positions && contact.data.positions.values && contact.data.positions.values[0].company && contact.data.positions.values[0].company.name ? contact.data.positions.values[0].company.name : "",
             "tagline" : contact.data.headline ?  contact.data.headline : "",
          };
       }
