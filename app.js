@@ -104,9 +104,12 @@ app.get('/pipe', function (req, res) {
 
                   if (contacts.hasOwnProperty(contact)){
                   //BUILD CHUM
-                     var newChum = mapChum(contact);
-                     if(!newChum){
+                     var newChum = mapChum(contacts[contact]);
+                     if(newChum){
                      //IF CHUM MAPPED SUCCESSFULLY
+
+                        newChum["owner"] = req.session.userId;
+                        console.log("cIndex: " + cIndex);
 
                         if(cIndex == 0) {
                         //IF FIRST, RETURN CHUM
@@ -344,7 +347,7 @@ function mapChum(contact){
       if(contact.idr.indexOf("facebook") != -1) {
            
          chum = { 
-            "id" : contact.idr ? contact.idr : "",
+            "idr" : contact.idr ? contact.idr : "",
             "name" : contact.data.name ? contact.data.name : "",
             "profiles" : {"facebook" : contact.data.username ? contact.data.username : ""},
             "photos" : {"facebook" : contact.oembed && contact.oembed.thumbnail_url ? contact.oembed.thumbnail_url : ""},
@@ -358,7 +361,7 @@ function mapChum(contact){
       else if(contact.idr.indexOf("twitter") != -1){
 
          chum = { 
-            "id" : contact.idr ? contact.idr : "",
+            "idr" : contact.idr ? contact.idr : "",
             "name" : contact.data.name ? contact.data.name : "",
             "profiles" : {"twitter" : contact.data.screen_name ? contact.data.screen_name : ""}, 
             "photos" : {"twitter" : contact.data.profile_image_url ? contact.data.profile_image_url : ""},
@@ -372,7 +375,7 @@ function mapChum(contact){
       else if(contact.idr.indexOf("linkedin") != -1){
 
          chum = { 
-            "id" : contact.idr ? contact.idr : "",
+            "idr" : contact.idr ? contact.idr : "",
             "name" : contact.data.firstName ? contact.data.firstName + " " + (contact.data.lastName ? contact.data.lastName : "") : "",
             "profiles" : {"linkedin" : contact.data.id ? contact.data.id : ""},
             "photos" : {"linkedin" : contact.data.profile_image_url ? contact.data.profile_image_url : ""},
@@ -386,7 +389,7 @@ function mapChum(contact){
       else if(contact.idr.indexOf("gcontacts") != -1){
 
          chum = { 
-            "id" : contact.idr,
+            "idr" : contact.idr,
             "name" : contact.data.gd$name ? (contact.data.gd$name.gd$fullName ? contact.data.gd$name.gd$fullName : "") : "",
             "profiles" : {"gcontacts" : contact.data.gd$email && contact.data.gd$email[0] ? contact.data.gd$email[0].address : ""}, 
             "photos" : "",
