@@ -3,15 +3,11 @@ var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
 
-
-
-
 // Create an HTTP server
 var app = express.createServer();
 require('./config/environment.js')(app, express);
 app.set('view engine', 'ejs');
-
-
+app.pipeDB.load();
 
 //*************************************
 //HOME
@@ -22,13 +18,11 @@ app.get('/', function (req, res) {
    res.render('splash', {session: req.session});
 });
 
-
 //*************************************
 //SELECT SERVICES
 //*************************************
 app.get('/auth', function (req, res){ 
 
-   app.pipeDB.load();
    // Render out views/auth.ejs, passing in the array of links and the session
    res.render('auth', {
       services: getAuthServices(req),
@@ -207,6 +201,20 @@ app.get('/skip', function (req, res) {
 
 });
 
+app.post('/skip', function(req, res) {
+   if (!req.session.access_token) return res.redirect('/');
+
+   var skip = new app.pipeDB.Skip();
+   var chumIdr = req.body.chumIdr;
+   skip.chum = app.pipeDB.Chum.findOne({"idr": req.param('chumIdr', null)});
+   skip.schedule = req.param('schedule', "");
+   skip.note = req.param('note', "");
+   //skip.save();
+   res.render('skip', {
+      session: req.session
+   });
+});
+
 //*************************************
 //USER
 //*************************************
@@ -346,7 +354,6 @@ function getContactCounts(req, next){
 }
 
 function mapChum(contact){
-
       var chum = null;
       console.log("mapping contact: " + JSON.stringify(contact));
 
