@@ -99,7 +99,8 @@ app.get('/pipe', function (req, res) {
          app.pipeDB.getOffset(req.session.userId, function(offset){
 
             //GET NEXT CONTACTS
-            app.singly.apiCall('/types/contacts', {limit:20, offset:offset, access_token:req.session.access_token}, function(err, contacts){
+            //not currently supported: limit:20, offset:offset
+            app.singly.apiCall('/types/contacts', {map: true, access_token:req.session.access_token}, function(err, contacts){
 
                var cIndex = 0;
                //GO THROUGH ALL RETURNED CONTACTS
@@ -114,7 +115,7 @@ app.get('/pipe', function (req, res) {
                      //IF CHUM MAPPED SUCCESSFULLY
 
                         newChum["owner"] = req.session.userId;
-                        console.log("cIndex: " + cIndex);
+                        //console.log("cIndex: " + cIndex);
 
                         if(cIndex == 0) {
                         //IF FIRST, RETURN CHUM
@@ -172,7 +173,7 @@ app.get('/connect', function (req, res) {
       //IF FACEBOOK
          //??
       //REDIRECT TO PIPE W/ MESSAGE
-      res.redirect('/pipe');
+      //res.redirect('/pipe');
 
    //ELSE
       //GET CONNECTED ACCOUNTS FROM DB
@@ -194,7 +195,7 @@ app.get('/skip', function (req, res) {
    //IF SUBMIT
       //SAVE SKIP TO DB
       //REDIRECT TO PIPE W/ MESSAGE
-      res.redirect('/pipe');
+      //res.redirect('/pipe');
 
    //ELSE
       //GET CONNECTED ACCOUNTS FROM DB
@@ -355,12 +356,13 @@ function mapChum(contact){
             "idr" : contact.idr ? contact.idr : "",
             "name" : contact.data.name ? contact.data.name : "",
             "profiles" : {"facebook" : contact.data.username ? contact.data.username : ""},
-            "photos" : {"facebook" : contact.oembed && contact.oembed.thumbnail_url ? contact.oembed.thumbnail_url : ""},
+            "photos" : contact.map && contact.map.photo ? contact.map.photo : "",
+            //{"facebook" : contact.data.username ? "https://graph.facebook.com/" + contact.data.username + "/picture": ""},
             "status" : "",
-            "meta" : contact.data.bio ? contact.data.bio : "",
+            "meta" : contact.data.quotes ? contact.data.quotes : (contact.data.bio ? contact.data.bio : ""),
             "location" : contact.data.location && contact.data.location.name ? contact.data.location.name : "",
             "profession" : contact.data.work && contact.data.work[0].employer && contact.data.work[0].employer.name ? contact.data.work[0].employer.name : "",
-            "tagline" : contact.data.quotes ? contact.data.quotes : ""
+            //"tagline" : 
          };  
       }
       else if(contact.idr.indexOf("twitter") != -1){
@@ -369,12 +371,13 @@ function mapChum(contact){
             "idr" : contact.idr ? contact.idr : "",
             "name" : contact.data.name ? contact.data.name : "",
             "profiles" : {"twitter" : contact.data.screen_name ? contact.data.screen_name : ""}, 
-            "photos" : {"twitter" : contact.data.profile_image_url ? contact.data.profile_image_url : ""},
+            "photos" : contact.map && contact.map.photo ? contact.map.photo : "",
+            //{"twitter" : contact.data.profile_image_url ? contact.data.profile_image_url : ""},
             "status" : contact.data.status && contact.data.status.text ? contact.data.status.text : "",
             "meta" : contact.data.description ? contact.data.description : "",
             "location" : contact.data.location ? contact.data.location : "",
             "profession" : "",
-            "tagline" : contact.data.description ? contact.data.description : ""
+            //"tagline" : contact.data.description ? contact.data.description : ""
          };
       }
       else if(contact.idr.indexOf("linkedin") != -1){
@@ -383,12 +386,12 @@ function mapChum(contact){
             "idr" : contact.idr ? contact.idr : "",
             "name" : contact.data.firstName ? contact.data.firstName + " " + (contact.data.lastName ? contact.data.lastName : "") : "",
             "profiles" : {"linkedin" : contact.data.id ? contact.data.id : ""},
-            "photos" : {"linkedin" : contact.data.profile_image_url ? contact.data.profile_image_url : ""},
+            "photos" : contact.data.pictureUrl ? contact.data.pictureUrl : "",
             "status" : contact.data.status && contact.data.status.text ? contact.data.status.text : "",
-            "meta" : contact.data.description ? contact.data.description : "",
+            "meta" : contact.data.description ? contact.data.description : (contact.data.headline ?  contact.data.headline : ""),
             "location" : contact.data.location && contact.data.location.name ? contact.data.location.name : "",
             "profession" : contact.data.positions && contact.data.positions.values && contact.data.positions.values[0].company && contact.data.positions.values[0].company.name ? contact.data.positions.values[0].company.name : "",
-            "tagline" : contact.data.headline ?  contact.data.headline : "",
+            //"tagline" : contact.data.headline ?  contact.data.headline : "",
          };
       }
       else if(contact.idr.indexOf("gcontacts") != -1){

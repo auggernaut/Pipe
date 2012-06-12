@@ -40,13 +40,13 @@
       
       div#imagecontainer {
       	margin: 0 auto;
-      	width:300px;
+      	width:160px;
       	position:relative;
         background: transparent url() no-repeat top center; 
         background-size:cover;
         -webkit-border-radius: 8px;
         border-radius:8px;
-        height:165px;
+        height:160px;
         overflow:hidden;
 
       }
@@ -67,7 +67,7 @@
       
       div#imageoverlay {
         background: transparent url(../img/feed_img_overlay.png) no-repeat; 
-    	-webkit-background-size: 300px 165px;
+    	-webkit-background-size: 300px 160px;
         height: 165px;
         overflow: hidden;
       }
