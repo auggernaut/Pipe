@@ -53,7 +53,7 @@
       
       div#imagecontainer img {      
 	    vertical-align: middle;
-	    width: 100%;
+	    /*width: 100%;*/
 	  }
       
       div#arrowright {
@@ -131,7 +131,7 @@
       div#live div#text {
       	padding-top:5px;
       }
-      form#contact textarea {
+      form#connect textarea {
       width:90%;
       height:100px;
       margin:5px 0 10px 0;
@@ -145,7 +145,7 @@
       	margin-top:15px;
       }
       
-      form#contact input[type="image"] {
+      form#connect input[type="image"] {
       	margin-top:5px;
       }
       
@@ -154,7 +154,7 @@
     	-webkit-background-size: 35px 35px;
       }
       
-      form#contact {
+      form#connect {
       }
       div#sendviatext {
       float:left;
@@ -277,7 +277,7 @@
     
     div#radios { width:70%; margin: 30px auto;}
     
-    form#contact textarea {height:200px}
+    form#connect textarea {height:200px}
     
     div#sendviatext {
     	font-size:20px;

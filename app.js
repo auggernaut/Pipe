@@ -83,11 +83,13 @@ app.get('/pipe', function (req, res) {
    }
 
    //LOAD NEXT CHUM
-   app.pipeDB.getNextChum(user, function(chum){
+   app.pipeDB.getNextChum(req.session.userId, function(chum){
 
       if(!chum){
       //IF NO LOCAL UNSURFACED CHUMS (none yet downloaded OR all have been touched OR none scheduled, etc...)
       //DOWNLOAD NEXT SET
+
+         console.log("...Getting next contacts set... chum--> " + chum);
 
          //GET NEXT OFFSET
          app.pipeDB.getOffset(req.session.userId, function(offset){
@@ -100,15 +102,13 @@ app.get('/pipe', function (req, res) {
                //GO THROUGH ALL RETURNED CONTACTS
                for(var contact in contacts){
 
-                  console.log("contact --> " + JSON.stringify(contacts[contact]));
-
                   if (contacts.hasOwnProperty(contact)){
                   //BUILD CHUM
                      var newChum = mapChum(contacts[contact]);
                      if(newChum){
                      //IF CHUM MAPPED SUCCESSFULLY
 
-                        newChum["owner"] = req.session.userId;
+                        newChum.userId = req.session.userId;
                         //console.log("cIndex: " + cIndex);
 
                         if(cIndex == 0) {
@@ -139,6 +139,7 @@ app.get('/pipe', function (req, res) {
       }
       else {
 
+         console.log("...Found unsurfaced local contact... chum--> " + chum);
          //FIND ALL RELATED CONTACTS
          //SAVE EACH TO DB
 
@@ -158,26 +159,48 @@ app.get('/connect', function (req, res) {
    //AUTH CHECK
    if (!req.session.access_token) return res.redirect('/');
 
-   //IF SUBMIT
-      //SAVE CONNECT TO DB
-      //IF LINKEDIN OR TWITTER
-         //SEND TO SINGLY PROXY
-      //IF EMAIL
-         //SEND EMAIL
-      //IF FACEBOOK
-         //??
-      //REDIRECT TO PIPE W/ MESSAGE
-      //res.redirect('/pipe');
+   //GET CONNECTED PROFILES FROM DB
+   
 
-   //ELSE
-      //GET CONNECTED ACCOUNTS FROM DB
-      //RETURN CONNECTION OPTIONS
-      res.render('connect', {
-         session: req.session,
-         chum: chum
-      });
+
+   //RETURN CONNECTION OPTIONS
+   res.render('connect', {
+      session: req.session
+   });
 
 });
+
+app.post('/connect', function(req, res) {
+   if (!req.session.access_token) return res.redirect('/');
+
+   //SAVE CONNECT TO DB
+   var connect = new app.pipeDB.Connect();
+   connect.chumIdr = req.body.chumIdr;
+   connect.profile = req.body.profile;
+   connect.subject = req.body.subject;
+   connect.body = req.body.body;
+
+   app.pipeDB.saveConnect(connect, function(){
+
+   });
+
+   //CHECK SEND METHOD
+   //IF LINKEDIN OR TWITTER
+      //SEND TO SINGLY PROXY
+   //IF EMAIL
+      //SEND EMAIL
+      //app.email.send(connect)
+   //IF FACEBOOK
+      //??
+
+
+   //RERENDER CONNECT W/ MESSAGE
+   res.render('connect', {
+      session: req.session,
+      message: "Message Sent!"
+   });
+});
+
 
 //*************************************
 //SKIP
@@ -357,64 +380,98 @@ function mapChum(contact){
       var chum = null;
       console.log("mapping contact: " + JSON.stringify(contact));
 
-      if(contact.idr.indexOf("facebook") != -1) {
-           
-         chum = { 
-            "idr" : contact.idr ? contact.idr : "",
-            "name" : contact.data.name ? contact.data.name : "",
-            "profiles" : {"facebook" : contact.data.username ? contact.data.username : ""},
-            "photos" : contact.map && contact.map.photo ? contact.map.photo : "",
-            //{"facebook" : contact.data.username ? "https://graph.facebook.com/" + contact.data.username + "/picture": ""},
-            "status" : "",
-            "meta" : contact.data.quotes ? contact.data.quotes : (contact.data.bio ? contact.data.bio : ""),
-            "location" : contact.data.location && contact.data.location.name ? contact.data.location.name : "",
-            "profession" : contact.data.work && contact.data.work[0].employer && contact.data.work[0].employer.name ? contact.data.work[0].employer.name : "",
-            //"tagline" : 
-         };  
-      }
-      else if(contact.idr.indexOf("twitter") != -1){
 
-         chum = { 
-            "idr" : contact.idr ? contact.idr : "",
-            "name" : contact.data.name ? contact.data.name : "",
-            "profiles" : {"twitter" : contact.data.screen_name ? contact.data.screen_name : ""}, 
-            "photos" : contact.map && contact.map.photo ? contact.map.photo : "",
-            //{"twitter" : contact.data.profile_image_url ? contact.data.profile_image_url : ""},
-            "status" : contact.data.status && contact.data.status.text ? contact.data.status.text : "",
-            "meta" : contact.data.description ? contact.data.description : "",
-            "location" : contact.data.location ? contact.data.location : "",
-            "profession" : "",
-            //"tagline" : contact.data.description ? contact.data.description : ""
-         };
+
+      if(contact.idr.indexOf("facebook") != -1){
+
+         chum = new app.pipeDB.Chum();
+
+         chum.name = contact.data.name ? contact.data.name : "";
+         var profile  = new app.pipeDB.Profile();
+         profile.type = "facebook";
+         profile.idr = contact.idr ? contact.idr : "";
+         profile.userId = contact.data.username ? contact.data.username : "";
+         chum.profiles = [profile];
+
+         var photo = new app.pipeDB.Photo();
+         photo.type = "facebook";
+         photo.url = contact.map && contact.map.photo ? contact.map.photo : "";
+         chum.photos = [photo];
+         //{"facebook" : contact.data.username ? "https://graph.facebook.com/" + contact.data.username + "/picture": ""},
+         
+         chum.status = "";
+         chum.meta = contact.data.quotes ? contact.data.quotes : (contact.data.bio ? contact.data.bio : "");
+         chum.location =  contact.data.location && contact.data.location.name ? contact.data.location.name : "";
+         chum.profession = contact.data.work && contact.data.work[0].employer && contact.data.work[0].employer.name ? contact.data.work[0].employer.name : "";
+         //"tagline" : 
+       
+   }
+      else if(contact.idr.indexOf("twitter") != -1){
+         chum = new app.pipeDB.Chum();
+
+         chum.name = contact.data.name ? contact.data.name : "";
+         var profile  = new app.pipeDB.Profile();
+         profile.type = "twitter";
+         profile.idr = contact.idr ? contact.idr : "";
+         profile.userId = contact.data.screen_name ? contact.data.screen_name : "";
+         chum.profiles = [profile];
+
+         var photo = new app.pipeDB.Photo();
+         photo.type = "twitter";
+         photo.url = contact.map && contact.map.photo ? contact.map.photo : "";
+         chum.photos = [photo];
+         
+         chum.status = contact.data.status && contact.data.status.text ? contact.data.status.text : "";
+         chum.meta = contact.data.description ? contact.data.description : "";
+         chum.location =  contact.data.location ? contact.data.location : "";
+         chum.profession = "";
+         
       }
       else if(contact.idr.indexOf("linkedin") != -1){
+         chum = new app.pipeDB.Chum();
 
-         chum = { 
-            "idr" : contact.idr ? contact.idr : "",
-            "name" : contact.data.firstName ? contact.data.firstName + " " + (contact.data.lastName ? contact.data.lastName : "") : "",
-            "profiles" : {"linkedin" : contact.data.id ? contact.data.id : ""},
-            "photos" : contact.data.pictureUrl ? contact.data.pictureUrl : "",
-            "status" : contact.data.status && contact.data.status.text ? contact.data.status.text : "",
-            "meta" : contact.data.description ? contact.data.description : (contact.data.headline ?  contact.data.headline : ""),
-            "location" : contact.data.location && contact.data.location.name ? contact.data.location.name : "",
-            "profession" : contact.data.positions && contact.data.positions.values && contact.data.positions.values[0].company && contact.data.positions.values[0].company.name ? contact.data.positions.values[0].company.name : "",
-            //"tagline" : contact.data.headline ?  contact.data.headline : "",
-         };
+         chum.name = contact.data.firstName ? contact.data.firstName + " " + (contact.data.lastName ? contact.data.lastName : "") : "";
+         var profile  = new app.pipeDB.Profile();
+         profile.type = "linkedin";
+         profile.idr = contact.idr ? contact.idr : "";
+         profile.userId = contact.data.id ? contact.data.id : "";
+         profile.link = contact.data.siteStandardProfileRequest ? contact.data.siteStandardProfileRequest : "";
+         chum.profiles = [profile];
+
+         var photo = new app.pipeDB.Photo();
+         photo.type = "linkedin";
+         photo.url = contact.data.pictureUrl ? contact.data.pictureUrl : "";
+         chum.photos = [photo];
+         
+         chum.status = contact.data.status && contact.data.status.text ? contact.data.status.text : "";
+         chum.meta = contact.data.description ? contact.data.description : (contact.data.headline ?  contact.data.headline : "");
+         chum.location =  contact.data.location && contact.data.location.name ? contact.data.location.name : "";
+         chum.profession = contact.data.positions && contact.data.positions.values && contact.data.positions.values[0].company && contact.data.positions.values[0].company.name ? contact.data.positions.values[0].company.name : "";
+
       }
       else if(contact.idr.indexOf("gcontacts") != -1){
+         chum = new app.pipeDB.Chum();
 
-         chum = { 
-            "idr" : contact.idr,
-            "name" : contact.data.gd$name ? (contact.data.gd$name.gd$fullName ? contact.data.gd$name.gd$fullName : "") : "",
-            "profiles" : {"gcontacts" : contact.data.gd$email && contact.data.gd$email[0] ? contact.data.gd$email[0].address : ""}, 
-            "photos" : "",
-            "status" : "",
-            "meta" : "",
-            "location" : "",
-            "profession" : "",
-            "tagline" : ""  
-            //"photo" : contact.oembed && contact.oembed.thumbnail_url,    
-         };
+         chum.name  = contact.map && contact.map.oembed && contact.map.oembed.title ? contact.map.oembed.title : "";
+         //chum.name = contact.data.name ? contact.data.name : "";
+         var profile  = new app.pipeDB.Profile();
+         profile.type = "gcontacts";
+         profile.idr = contact.idr ? contact.idr : "";
+         profile.userId = contact.map && contact.map.oembed && contact.map.oembed.email ? contact.map.oembed.email : "";
+         //profile.userId = contact.data.gd$email && contact.data.gd$email[0] ? contact.data.gd$email[0].address : "";
+         chum.profiles = [profile];
+
+         //TODO: grab photo through proxy
+         var photo = new app.pipeDB.Photo();
+         photo.type = "gcontacts";
+         photo.url = contact.map && contact.map.photo ? contact.map.photo : "";
+         chum.photos = [photo];
+         
+         //chum.status = "";
+         //chum.meta = "";
+         //chum.location =  "";
+         //chum.profession = "";
+         
       }
 
       return chum;

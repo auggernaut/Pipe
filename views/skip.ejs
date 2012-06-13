@@ -7,7 +7,7 @@
     	<a href="/pipe"><h1 id="name" class="back">{{friend.fullName}}</h1></a>
     	<div id="divider" class="nodesktop"></div>
     	
-    	<form id="contact">
+    	 <FORM id="connect" action="/skip" method="post">
     		<p style="text-align:left;">Do you want us to delete this person from your Pipe permanently?</p>
     		<div id="radios">
 		    	<input type="radio" name="howlong" value="forever" id="howlong_forever" /> <label for="howlong_forever">Yes, I never want to contact this person</label><br />
@@ -16,7 +16,7 @@
   
   	    	<div style="clear:both"></div>
     	
-	    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" onclick="mixpanel.track('skip-submit');" {{action "submit"}} />
+	    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" onclick="mixpanel.track('skip-submit');"/>
 	    		
     	</form>
     
