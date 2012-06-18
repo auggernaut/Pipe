@@ -1,16 +1,36 @@
+<script type="text/javascript">$('body').addClass('feed');</script>
+
 <div class="container">
 
 	<h1 id="name"><%= chum.name %></h1>
 	<div class="divider"></div>
 
-
+	<%- messages() %>
+	
 	<div id="desktopcontainer">
 		<div id="imagecontainer">
-	    	<div id="imageoverlay"><img src="<%= chum.photos[0].url %>" class="<%= chum.photos[0].type %>"/></div>
+		<% for(var i = 0; i<chum.photos.length; i++) { %>
+		
+			<% if(chum.photos[i].link){ %>
+				<% if(chum.photos[i].type == "facebook"){ %>
+			 		<div class="imageLeft">
+			 	<% }else{ %>
+			 		<div class="imageRight">
+			 	<% } %>
+
+				<% if(chum.photos[i].url){ %>
+	    		<a href="<%= chum.photos[i].link %>"><img src="<%= chum.photos[i].url %>" class="<%= chum.photos[i].type %>"/></a>
+	    		<% }else{ %>
+	    		<a href="<%= chum.photos[i].link %>"><img src="img/social_networks/<%= chum.photos[i].type %>_missing.png" class="<%= chum.photos[i].type %> missing"/></a>
+	    		<% } %>
+	    		</div>
+	    	<% } %>
+		
+		<% } %>
 		</div>
 
 		<div id="connectorskip">
-			<a href="/connect"><img id="connect" src="img/connect_btn.jpg" width="231px" height="44px"/></a>
+			<a href="/connect?id=<%= chum._id %>"><img id="connect" src="img/connect_btn.jpg" width="231px" height="44px"/></a>
 			<a href="/skip"><img id="skip" src="img/skip_btn.jpg" width="64px" height="44px" /></a>
 		</div>
 
@@ -55,5 +75,14 @@
 	</div>
 </div>
 
-
+<script type="text/javascript">
+/*var $container = $('#imagecontainer');
+$container.imagesLoaded(function(){
+  $container.masonry({
+    itemSelector : '.image',
+    columnWidth: 88
+  });
+});
+*/
+</script>
 

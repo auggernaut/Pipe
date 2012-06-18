@@ -4,6 +4,10 @@ var Singly = require('../lib/singly');
 var DB = require('../lib/db');
 
 module.exports = function(app, express) {
+
+
+  app.dynamicHelpers({ messages: require('express-messages') });
+  
   // Setup for the express web framework
   app.configure(function() {
      app.use(express.logger());

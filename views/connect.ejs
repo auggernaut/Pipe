@@ -1,27 +1,130 @@
+<script type="text/javascript">$('body').addClass('feed');</script>
 
+<script type="text/javascript">
+
+function greyAll(){
+	<% for(var i = 0; i<chum.profiles.length; i++) { %>
+		<% if(chum.profiles[i].userId){ %>
+			$("#<%=chum.profiles[i].type%><%=i%>Btn").attr("src","img/social_networks/<%=chum.profiles[i].type%>_grey.png");
+			$("#<%=chum.profiles[i].type%><%=i%>Link").hide();
+			<% } %>
+	<% } %>
+}
+
+$(document).ready(function(){
+	
+<% for(var i = 0; i<chum.profiles.length; i++) { %>
+<% if(chum.profiles[i].userId){ %>	
+	$("#<%=chum.profiles[i].type%><%=i%>").click(function(){
+
+	<% if(chum.profiles[i].type == "facebook"){ %>
+		$("#subject").slideUp("fast");
+		$("#body").slideUp("fast");
+		$("#submit").slideUp("fast");
+		$("#fbLink").slideDown("fast");
+	<% } else if(chum.profiles[i].type == "twitter"){ %>
+		$("#subject").slideUp("fast");
+		$("#body").slideDown("fast");
+		$("#submit").slideDown("fast");
+		$("#fbLink").slideUp("fast");
+	<% } else if(chum.profiles[i].type == "linkedin"){ %>
+		$("#subject").slideDown("fast");
+		$("#body").slideDown("fast");
+		$("#submit").slideDown("fast");
+		$("#fbLink").slideUp("fast");
+	<% } else if(chum.profiles[i].type == "gcontacts"){ %>
+		$("#subject").slideDown("fast");
+		$("#body").slideDown("fast");
+		$("#submit").slideDown("fast");
+		$("#fbLink").slideUp("fast");
+	<% } %>
+
+		greyAll();
+		$("#<%=chum.profiles[i].type%><%=i%>Btn").attr("src","img/social_networks/<%=chum.profiles[i].type%>_blue.png");
+		$("#<%=chum.profiles[i].type%><%=i%>Link").slideDown("fast");
+		$("#profileIdr").attr("value", "<%=chum.profiles[i].idr%>");
+		$("#profileUserId").attr("value", "<%=chum.profiles[i].userId%>");
+	});
+<% } %><% } %>
+
+	$(".defaultText").focus(function(srcc)
+    {
+        if ($(this).val() == $(this)[0].title)
+        {
+            $(this).removeClass("defaultTextActive");
+            $(this).val("");
+        }
+    });
+    
+    $(".defaultText").blur(function()
+    {
+        if ($(this).val() == "")
+        {
+            $(this).addClass("defaultTextActive");
+            $(this).val($(this)[0].title);
+        }
+    });
+    
+    $(".defaultText").blur(); 
+
+});
+</script>
 
 <div class="container">
 	<div id="desktopcontainer">
-		<a href="/pipe"><h1 id="name" class="back">{{friend.fullName}}</h1></a>	
+		<a href="/pipe"><h1 id="name" class="back"><%= chum.name %></h1></a>	
 		<div id="divider" class="nodesktop"></div>
-				
-		<form id="connect">
-		    <input type="text" maxlength="150" id="subject" value="Enter a subject here ..." style="width:400px;display:none;"/>
-			<textarea id="messageText">Enter a message here ...</textarea>
-
-			<div id="sendvia">
-				<div id="sendviatext">
-				Send via:
-				</div>
-				<div id="sendsocialnetworks">
-				    <a href="#" {{action "selectMail"}} {{bindAttr id="friend.services.one"}}><img id="mail" src="img/social_networks/gcontacts_grey.png" width="46" heigh="46"/></a>
-					<a href="#" {{action "selectLinkedIn"}} {{bindAttr id="friend.services.two"}}><img id="linkedin" src="img/social_networks/linkedin_grey.png"width="46" heigh="46" /></a>
-					<a href="#" {{action "selectTwitter"}} {{bindAttr id="friend.services.three"}}><img id="twitter" src="img/social_networks/twitter_grey.png" width="46" heigh="46" />
-					</a>
-				</div>
+		
+		<div id="sendvia">
+			<div id="sendviatext">
+			Connect via:
 			</div>
-			<div style="clear:both"></div>	
-			<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" {{action "send"}} />
+			<div id="sendsocialnetworks">
+				<% for(var i = 0; i<chum.profiles.length; i++) { %>
+					<% if(chum.profiles[i].userId){ %>
+			    	<a href="#" id="<%= chum.profiles[i].type %><%=i%>">
+			    		<img id="<%= chum.profiles[i].type %><%=i%>Btn" src="img/social_networks/<%= chum.profiles[i].type %>_grey.png" width="46" heigh="46"/>
+			    	</a>
+			    	<% } %>
+				<% } %>
+			</div>
+			<div id="connectId">
+				<% for(var i = 0; i<chum.profiles.length; i++) { %>
+					<% if(chum.profiles[i].userId){ %>
+			    	<a href="<%= chum.profiles[i].link %>" id="<%= chum.profiles[i].type %><%=i%>Link" class="hide">
+			    		<%=chum.profiles[i].userId%>
+			    	</a>
+			    	<% } %>
+				<% } %>
+			</div>
+		</div>
+		<div style="clear:both"></div>
+
+		<form id="connect" action="/connect" method="post">
+			<input type="hidden" name="profileIdr" id="profileIdr"/>
+			<input type="hidden" name="profileUserId" id="profileUserId"/>
+			<div class="hide" id="subject">
+		   	<input type="text" maxlength="150" name="subject" class="defaultText" title="Enter a subject here ..."/>
+		   </div>
+		   <div class="hide" id="body">
+				<textarea name="body" class="defaultText" title="Enter a message here ..."></textarea>
+			</div>
+			<div class="hide" id="submit">
+				<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" />
+			</div>
+			<div class="hide" id="fbLink">
+				<% for(var i = 0; i<chum.profiles.length; i++) { %>
+					<% if(chum.profiles[i].type == "facebook"){ %>
+				To send this person a Facebook message <a href="https://www.facebook.com/dialog/send?app_id=249841195129594&
+to=<%= chum.profiles[i].userId %>&
+link=http://pipeapp.co&
+picture=http://pipeapp.co/img/desktop/pipe_trans.png&
+description=Pipe helps you connect with the people important to you.&
+redirect_uri=https://api.singly.com
+" target="_blank">click here</a>.
+			    	<% } %>
+				<% } %>
+			</div>
 		</form>
 
 		<div id="info">
@@ -30,19 +133,20 @@
 		    		<div id="icon">
 		    		</div>
 		    		<div id="text">
-		    			{{friend.description}}
+		    			<%= chum.meta %>
 		    		</div>
 				</div>
 			</div>
 			<div style="clear:both"></div>
 			<div id="divider"></div>
 			
+			
 			<div id="work">
 				<div id="container">
 		    		<div id="icon">
 		    		</div>
 		    		<div id="text">
-		    			{{friend.profession}}
+		    			<%= chum.profession %>
 		    		</div>
 				</div>
 			</div>
@@ -54,13 +158,15 @@
 		    		<div id="icon">
 		    		</div>
 		    		<div id="text">
-		    			{{friend.location}}
+		    			<%= chum.location %>
 		    		</div>
 				</div>
 			</div>
 			<div style="clear:both"></div>
 			<div id="divider"></div>
-		</div>  
+		</div>    
 	</div>
 </div>
+
+
 	

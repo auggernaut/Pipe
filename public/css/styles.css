@@ -37,22 +37,54 @@
 	      color:#62aada;
 	      padding-bottom:10px;
       }
+
+      div.hide{
+        display: none;
+      }
       
       div#imagecontainer {
       	margin: 0 auto;
-      	width:160px;
+      	width:300px;
       	position:relative;
-        background: transparent url() no-repeat top center; 
+        /*background: transparent url() no-repeat top center; 
         background-size:cover;
+        height:160px;*/
         -webkit-border-radius: 8px;
-        border-radius:8px;
-        height:160px;
+        
         overflow:hidden;
+      }
+
+      div.imageLeft{
+        /*float: left;
+        top: 0px;
+        position: absolute;*/
+      }
+
+      div.imageRight{
+        display: inline;
+        /*float: right;
+        clear: right;*/
+      }
+
+      div#imagecontainer .facebook{
+        margin: 3px;
 
       }
-      
+      div#imagecontainer .linkedin{
+        margin: 3px;
+
+      }
+      div#imagecontainer .twitter{
+        width: 80px;
+        margin: 3px;
+      }
+      div#imagecontainer .gcontacts{
+        margin: 3px;
+      }
+
       div#imagecontainer img {      
 	    vertical-align: middle;
+      border-radius:5px;
 	    /*width: 100%;*/
 	  }
       
@@ -154,27 +186,49 @@
     	-webkit-background-size: 35px 35px;
       }
       
-      form#connect {
+      form#connect .defaultText { 
+        width: 300px; 
       }
+
+      form#connect .defaultTextActive { 
+        color: #a1a1a1; font-style: italic;
+      }
+
+      div#sendvia {
+        margin: 0 auto;
+        width:350px;
+        padding-top:20px;
+      }
+
       div#sendviatext {
-      float:left;
-      width:120px;
-      height:30px;
-      padding-top:15px;
+        /*float:left;
+        width:120px;*/
+        height:30px;
+        font-size:20px;
+        padding-bottom:10px;
       }
+
       div#sendsocialnetworks {
-      float:left;
-      width:150px;
+        /*float:left;
+        width:200px;*/
+        margin-bottom: 20px;
       }
       
+      div#connectId {
+        margin-bottom:10px;
+        height:30px;
+      }
+
+      div#connectId a {
+        font-size: 15px;
+      }
       
-      
-            body.firstLogin {
+      body.firstLogin {
         /*background: transparent url('../img/home-mobile/birdy-bg.jpg') repeat;
-		-webkit-text-size-adjust: none;
-    	-webkit-background-size: 150px 150px;*/
-    	background: black;
-      	min-height:386px;
+        -webkit-text-size-adjust: none;
+        -webkit-background-size: 150px 150px;*/
+        background: black;
+        min-height:386px;
       }
       
       body.firstLogin div.container {
@@ -269,21 +323,13 @@
     
     h1#name {font-size:45px; padding-bottom:40px; padding-top:18px;}
     
-    div#sendvia {
-    	margin: 0 auto;
-    	width:300px;
-    	padding-top:20px;
-    }
+
     
     div#radios { width:70%; margin: 30px auto;}
     
     form#connect textarea {height:200px}
     
-    div#sendviatext {
-    	font-size:20px;
-    	
-    	padding-bottom:20px;
-    }
+
     
     div#bigcircles {border-bottom:solid 5px #ff8400}
     
