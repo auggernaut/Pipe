@@ -85,11 +85,35 @@ app.get('/pipe', function (req, res) {
    req.session.userId = req.session.profiles.id;
    console.log("___USERID____" + req.session.userId);
 
-   //LOAD NEXT CHUM
-   app.pipeDB.getNextChum(req.session.userId, function(chum){
+   app.pipeDB.hasChums(req.session.userId, function(chum){
 
-      if(!chum){
-      //IF NO LOCAL UNSURFACED CHUMS (none yet downloaded OR all have been touched OR none scheduled, etc...)
+      if(chum){
+      //Chums already loaded for user
+
+         //LOAD NEXT CHUM
+         app.pipeDB.getNextChum(req.session.userId, function(chum){
+
+            if(!chum){
+            //Already curated all Chums
+
+               //Redirect to thank you for Beta testing page:
+               res.redirect('/thank-you');
+            }
+            else {
+            //There's a next Chum
+
+               //TODO: Download contact info again (for updates)
+
+               //RETURN CHUM
+               res.render('pipe', {
+                  session: req.session
+                  , chum: chum
+               });
+            }
+         });
+      }
+      else {
+      //No chums loaded for user
       
          //GET CONTACTS FROM SINGLY, MERGE, SAVE TO DB
          processContacts(req.session, function(chum){
@@ -100,16 +124,12 @@ app.get('/pipe', function (req, res) {
                   , chum: chum
                });
          });
-      
+
       }
-      else {
-         //RETURN CHUM
-         res.render('pipe', {
-            session: req.session
-            , chum: chum
-         });
-      }
+
    });
+
+   
 });
 
 //*************************************
@@ -123,7 +143,7 @@ app.get('/connect', function (req, res) {
    app.pipeDB.getChumById(req.query["id"], function(chum){
       console.log("___GOT CHUM___" + JSON.stringify(chum));
 
-      //app.pipeDB.saveChum(chum, { surfaced : true });
+      app.pipeDB.updateChum(chum, { surfaced : true });
 
       //RETURN CONNECTION OPTIONS
       res.render('connect', {
@@ -132,14 +152,14 @@ app.get('/connect', function (req, res) {
       });
 
    });
-   
-
-   
 
 });
 
+
 app.post('/connect', function(req, res) {
    if (!req.session.access_token) return res.redirect('/auth');
+
+   //console.log("ID----" + req.body.chumId);
 
    //SAVE CONNECT TO DB
    var connect = new app.pipeDB.Connect();
@@ -156,15 +176,22 @@ app.post('/connect', function(req, res) {
    console.log("body: " + connect.body );
 
 
-   app.pipeDB.saveConnect(connect, function(){
+   app.pipeDB.addConnect(connect, function(err){
+
+      if(err)
+         console.log("ERROR SAVING CONNECT__" + err);
 
    });
 
    //CHECK SEND METHOD
 
    if(connect.profileIdr.indexOf("gcontacts") != -1){
-
       console.log("SENDING EMAIL");
+
+      //Get email from idr
+      var email = connect.profileIdr.split('contact:')[1].split('@gcontacts')[0];
+
+      console.log("TO: " + email);
 
       var SendGrid = require('sendgrid-nodejs').SendGrid;
       var sendgrid = new SendGrid("auggernaut", "P@lmtr33");
@@ -176,16 +203,17 @@ app.post('/connect', function(req, res) {
       }, function(success, message) {
          if (!success) {
             console.log(message);
-         } else {
+            req.flash("error", "Error sending email!");
+         } else 
             req.flash("info", "Email message sent!");
-            res.redirect('/pipe');
-         }
+            
+         res.redirect('/pipe');
+         
       });
 
 
    }
    else if(connect.profileIdr.indexOf("linkedin") != -1){
-
       console.log("SENDING LINKEDIN MESSAGE");
 
       app.singly.apiCallPost('/proxy/linkedin/people/~/mailbox', req.session, {
@@ -202,28 +230,34 @@ app.post('/connect', function(req, res) {
                "body": connect.message
             }, 
             function(err, response){   
-               if(response)
+               if(response){
                   console.log("ERROR - Send via LinkedIn: -err-" + err + " -json-" + JSON.stringify(response));
-               else{
+                  req.flash("error", "Error sending linkedin message!");   
+               }else
                   req.flash("info", "LinkedIn message sent!");
-                  res.redirect('/pipe');
-               } 
+               
+               res.redirect('/pipe');
             }
          );
    }
-   //IF LINKEDIN OR TWITTER
-      //SEND TO SINGLY PROXY
-   //IF EMAIL
-      //SEND EMAIL
-      //app.email.send(connect)
-   //IF FACEBOOK
-      //??
+   else if(connect.profileIdr.indexOf("twitter") != -1){
+      console.log("SENDING TWITTER MESSAGE");
 
-
-   //RERENDER CONNECT W/ MESSAGE
-   
-
-   
+      app.singly.apiCallPost('/proxy/twitter/direct_messages/new.json', req.session, {
+               "screen_name": connect.profileUserId,
+               "text": connect.message
+            }, 
+            function(err, response){   
+               if(response){
+                  console.log("ERROR - Send via Twitter: -err-" + err + " -json-" + JSON.stringify(response));
+                  req.flash("error", "Error sending twitter message!");
+               }else
+                  req.flash("info", "Twitter message sent!");
+               
+               res.redirect('/pipe');
+            }
+         );
+   }
 
 });
 
@@ -235,10 +269,19 @@ app.get('/skip', function (req, res) {
    //AUTH CHECK
    if (!req.session.access_token) return res.redirect('/auth');
 
+   //GET CONNECTED PROFILES FROM DB
+   app.pipeDB.getChumById(req.query["id"], function(chum){
+      console.log("___GOT CHUM___" + JSON.stringify(chum));
+
+      app.pipeDB.updateChum(chum, { surfaced : true });
+
+      //RETURN CONNECTION OPTIONS
       res.render('skip', {
          session: req.session
-         //accounts: accounts
+         , chum : chum
       });
+
+   });
 
 });
 
@@ -247,14 +290,31 @@ app.post('/skip', function(req, res) {
    if (!req.session.access_token) return res.redirect('/auth');
 
    var skip = new app.pipeDB.Skip();
-   var chumIdr = req.body.chumIdr;
-   skip.chum = app.pipeDB.Chum.findOne({"idr": req.param('chumIdr', null)});
-   skip.schedule = req.param('schedule', "");
-   skip.note = req.param('note', "");
+   //var chumIdr = req.body.chumIdr;
+   //skip.chum = app.pipeDB.Chum.findOne({"idr": req.param('chumIdr', null)});
+   skip.chumId = req.body.chumId;
+   var howoften = req.body.howOften;
+   if(howoften == "every")
+      skip.schedule = req.body.everyOptions;
+   else
+      skip.schedule = howoften;
+
+   skip.note = req.body.note ? req.body.note : "";
+
+   console.log("SKIP ADDED__ " + JSON.stringify(skip));
+   //console.log(req.body);
    //skip.save();
-   res.render('skip', {
-      session: req.session
+
+
+   app.pipeDB.addSkip(skip, function(err){   
+         if(err)
+            req.flash("error", "Error saving skip preference!");
+         else
+            req.flash("info", "Skip preference saved.");
+
+         res.redirect('/pipe');
    });
+
 });
 
 //*************************************
@@ -273,6 +333,19 @@ app.get('/user', function (req, res) {
       });
 
    
+});
+
+//*************************************
+//THANK YOU
+//*************************************
+app.get('/thank-you', function (req, res) {
+   //AUTH CHECK
+   if (!req.session.access_token) return res.redirect('/auth');
+
+      res.render('thank-you', {
+         session: req.session
+      });
+
 });
 
 
@@ -354,7 +427,7 @@ function processContacts(session, callback){
 
 
    //GET 100 names from Contacts
-   app.singly.apiCall('/types/contacts', {min_count: 50, map: true, fields: "map.oembed.title", access_token: session.access_token}, function(err, names){
+   app.singly.apiCall('/types/contacts', {min_count: 100, map: true, fields: "map.oembed.title", access_token: session.access_token}, function(err, names){
 
       var count = 0;
       var newChum;
@@ -395,8 +468,8 @@ function processContacts(session, callback){
                      callback(newChum);
                   }  
                   
-                  //SAVE CHUM TO DB
-                  app.pipeDB.saveChum(newChum);
+                  //ADD CHUM TO DB
+                  app.pipeDB.addChum(newChum);
 
                   count++;
                }

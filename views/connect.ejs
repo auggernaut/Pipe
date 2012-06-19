@@ -44,6 +44,7 @@ $(document).ready(function(){
 		$("#<%=chum.profiles[i].type%><%=i%>Link").slideDown("fast");
 		$("#profileIdr").attr("value", "<%=chum.profiles[i].idr%>");
 		$("#profileUserId").attr("value", "<%=chum.profiles[i].userId%>");
+		
 	});
 <% } %><% } %>
 
@@ -101,6 +102,7 @@ $(document).ready(function(){
 		<div style="clear:both"></div>
 
 		<form id="connect" action="/connect" method="post">
+			<input type="hidden" name="chumId" id="<%=chum._id%>" />
 			<input type="hidden" name="profileIdr" id="profileIdr"/>
 			<input type="hidden" name="profileUserId" id="profileUserId"/>
 			<div class="hide" id="subject">

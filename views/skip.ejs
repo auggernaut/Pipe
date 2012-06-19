@@ -1,19 +1,75 @@
 <script type="text/javascript">$('body').addClass('feed');</script>
 
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $(".defaultText").focus(function(srcc)
+    {
+        if ($(this).val() == $(this)[0].title)
+        {
+            $(this).removeClass("defaultTextActive");
+            $(this).val("");
+        }
+    });
+    
+    $(".defaultText").blur(function()
+    {
+        if ($(this).val() == "")
+        {
+            $(this).addClass("defaultTextActive");
+            $(this).val($(this)[0].title);
+        }
+    });
+    
+    $(".defaultText").blur(); 
+
+    if($('input[name=howOften]:checked', '#connect').val() == "every")
+        alert("every");
+    
+    $("#everyOptions").attr("disabled", true);
+
+    $('#howoften_never').click(function() {
+        $("#everyOptions").attr("disabled", true);
+    });
+    $('#howoften_every').click(function() {
+        $("#everyOptions").attr("disabled", false);
+    });
+    $('#howoften_random').click(function() {
+        $("#everyOptions").attr("disabled", true);
+    });
+    //$('.defaultText').val($('input[name=howoften]:checked', '#connect').val());
+
+
+});
+        //
+
+</script>
+
 <div class="container">
 	
 	<div id="desktopcontainer">
     	
-    	<a href="/pipe"><h1 id="name" class="back">{{friend.fullName}}</h1></a>
+    	<a href="/pipe"><h1 id="name" class="back"><%= chum.name %></h1></a>
     	<div id="divider" class="nodesktop"></div>
     	
     	 <FORM id="connect" action="/skip" method="post">
-    		<p style="text-align:left;">Do you want us to delete this person from your Pipe permanently?</p>
+            <input type="hidden" name="chumId" id="chumId" value="<%=chum._id%>" />
+    		<p style="text-align:left;">How often would you like to contact this person?</p>
     		<div id="radios">
-		    	<input type="radio" name="howlong" value="forever" id="howlong_forever" /> <label for="howlong_forever">Yes, I never want to contact this person</label><br />
-		    	<input type="radio" name="howlong" value="temporarily" id="howlong_temporarily" /> <label for="howlong_temporarily">No, show me this person again later</label><br />
+		    	<input type="radio" name="howOften" value="never" id="howoften_never" /> <label for="howlong_never">Never</label><br />
+		    	<input type="radio" name="howOften" value="every" id="howoften_every" /> <label for="howlong_every">Every</label>
+                <select name="everyOptions" id="everyOptions">
+                  <option value="week">Week</option>
+                  <option value="month">Month</option>
+                  <option value="biannual">6 Months</option>
+                  <option value="year">Year</option>
+                </select><br />
+                <input type="radio" name="howOften" value="random" id="howoften_random" /> <label for="howlong_random">Randomly</label>
     		</div>
   
+            <div id="note">
+                <textarea name="note" class="defaultText" title="Enter a note..."></textarea>
+            </div>
   	    	<div style="clear:both"></div>
     	
 	    	<input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" onclick="mixpanel.track('skip-submit');"/>

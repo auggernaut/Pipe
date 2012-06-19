@@ -1,5 +1,13 @@
 <script type="text/javascript">$('body').addClass('feed');</script>
 
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#messages').slideDown(300).delay(800).fadeIn(400).delay(1000).slideUp(300);
+});
+</script>
+
+
 <div class="container">
 
 	<h1 id="name"><%= chum.name %></h1>
@@ -31,7 +39,7 @@
 
 		<div id="connectorskip">
 			<a href="/connect?id=<%= chum._id %>"><img id="connect" src="img/connect_btn.jpg" width="231px" height="44px"/></a>
-			<a href="/skip"><img id="skip" src="img/skip_btn.jpg" width="64px" height="44px" /></a>
+			<a href="/skip?id=<%= chum._id %>"><img id="skip" src="img/skip_btn.jpg" width="64px" height="44px" /></a>
 		</div>
 
 		<div id="info">
