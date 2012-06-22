@@ -2,37 +2,187 @@ var express = require('express');
 var querystring = require('querystring');
 var request = require('request');
 var sprintf = require('sprintf').sprintf;
+var cookies = require('cookies').express;
+var SendGrid = require('sendgrid-nodejs').SendGrid;
+var path = require('path')
+   , templateDir    = path.join(__dirname, 'templates')
+   , emailTemplates = require('email-templates');
+
 
 // Create an HTTP server
 var app = express.createServer();
 require('./config/environment.js')(app, express);
 app.set('view engine', 'ejs');
+app.use( cookies () );
+
+var sendgrid = new SendGrid(app.sendGridLogin, app.sendGridPassword);
 app.pipeDB.load();
 
+
 //*************************************
-//HOME
+//STATIC PAGES
 //*************************************
 app.get('/', function (req, res) {
-   //console.log(singly.apiBaseUrl);
 
-   res.render('splash', {session: req.session});
+   //Skip splash page is user has been here before
+   if(req.cookies && req.cookies.get("access_token"))
+   //Returning user
+      res.redirect('/auth');
+   else
+   //New User
+      res.render('splash', {session: req.session});
 });
 
+app.get('/about', function (req, res) {
+   res.render('about', {session: req.session});
+});
+
+app.get('/privacy', function (req, res) {
+   res.render('privacy', {session: req.session});
+});
+
+
 //*************************************
-//SELECT SERVICES
+//CONTACT
+//*************************************
+app.get('/contact', function (req, res) {
+   res.render('contact', {session: req.session});
+});
+
+app.post('/contact', function(req, res) {
+
+   var email = req.body.email;
+   var message = req.body.message;
+
+   var SendGrid = require('sendgrid-nodejs').SendGrid;
+   var sendgrid = new SendGrid(app.sendGridLogin, app.sendGridPassword);
+   sendgrid.send({
+      to: app.contactEmail,
+      from: email,
+      subject: "User Message from Pipe",
+      text: message
+   }, function(success, message) {
+      if (!success) {
+         console.log(message);
+         req.flash("error", "Error sending email!");
+      } else 
+         req.flash("info", "Email message sent!");
+         
+      res.redirect('/contact');
+      
+   });
+
+});
+
+
+
+//*************************************
+//AUTH
 //*************************************
 app.get('/auth', function (req, res){ 
 
-   // Render out views/auth.ejs, passing in the array of links and the session
-   res.render('auth', {
-      services: getAuthServices(req),
-      session: req.session
-   });
+   var access_token = req.cookies.get("access_token");
+   var email = "Enter your email";
+
+   if(access_token){
+   //User already has an access_token
+
+      if(!req.session.access_token)
+         req.session.access_token = access_token;
+
+      console.log("RETURNING ACCESS TOKEN: " + access_token);
+
+      if(!req.session.profiles){
+      //Profiles have not been populated
+
+         app.singly.apiCall('/profiles', req.session, function(err, profilesBody) {
+      
+            try { console.log("Profiles: " + JSON.stringify(profilesBody)); }
+            catch(parseErr) { return res.send(parseErr, 500); }
+
+            req.session.profiles = profilesBody;
+
+            return res.redirect('/auth');
+         });
+
+      } else {
+      //Profiles have been populated
+
+         //Check if any service is not authed
+         var i , missing = false;
+         for (i = 0; i < app.usedServices.length; i++) {
+            if(req.session.profiles[app.usedServices[i]] == undefined)
+               missing = true;
+         }
+
+         if(missing){
+         //Not all services authed
+
+            //TODO pull from USER Account
+            var email = unescape(req.session.profiles["gcontacts"]);
+
+            res.render('auth', {
+               services: getAuthServices(req),
+               email: email,
+               session: req.session
+            });
+         } else
+         //All services already authed
+            res.redirect('/pipe');
+      }
+      
+   }
+   else{
+   //No access token in cookie
+
+      //Render Connect to Services links
+      res.render('auth', {
+         services: getAuthServices(req),
+         email: email,
+         session: req.session
+      });
+   }
+});
+
+app.post('/auth', function(req, res) {
+   if (!req.session.access_token) return res.redirect('/auth');
+
+   var email = req.body.email;
+   var subscribed = req.body.sendEmail;
+
+   if(!subscribed)
+      subscribed = "no";
+
+   //console.log("AUTH POST BODY: " + JSON.stringify(req.body));
+
+   //BUILD USER
+   var user = { 
+         sId: req.session.profiles.id
+       , profiles: req.session.profiles 
+       , access_token: req.session.access_token
+       , subscribed: subscribed
+       , email: email
+   };
+   console.log("USER: " + JSON.stringify(user));
+
+   //SAVE USER TO DB
+   app.pipeDB.saveUser(user);
+
+
+   //STORE USERID IN SESSION
+   //if (!req.session.userId)
+   //   req.session.userId = req.session.profiles.id;
+
+   console.log("___USERID____" + req.session.profiles.id);
+
+
+   res.redirect('/pipe');
+   
 });
 
 
 //*************************************
-//PROCESS AUTH
+//CALLBACK
 //*************************************
 app.get('/callback', function (req, res) {
 
@@ -40,19 +190,19 @@ app.get('/callback', function (req, res) {
    app.singly.getAccessToken(req.param('code'), function(err, access_token) {
 
       req.session.access_token = access_token;
+      res.cookies.set( "access_token", access_token );
 
+      console.log("NEW ACCESS TOKEN: " + access_token);
+
+      //REPOPULATE PROFILES
       app.singly.apiCall('/profiles', req.session, function(err, profilesBody) {
-         
-         try {
-            //profilesBody = JSON.parse(profilesBody);
-            console.log("Profiles: " + JSON.stringify(profilesBody));
-         } catch(parseErr) {
-            return res.send(parseErr, 500);
-         }
+      
+         try { console.log("Profiles: " + JSON.stringify(profilesBody)); }
+         catch(parseErr) { return res.send(parseErr, 500); }
 
          req.session.profiles = profilesBody;
-         res.redirect('/auth');
 
+         return res.redirect('/auth');
       });
    });
 });
@@ -65,33 +215,15 @@ app.get('/pipe', function (req, res) {
    //AUTH CHECK
    if (!req.session.access_token) return res.redirect('/auth');
 
-   //IF USER NOT LOADED
-   if (!req.session.userId){
-      
-      //BUILD USER
-      var user = { 
-            sId: req.session.profiles.id
-          , profiles: req.session.profiles 
-      };
-      console.log("USER: " + JSON.stringify(user));
+   //console.log("req.session.profiles.id: " + req.session.profiles.id)
 
-      //SAVE USER TO DB
-      app.pipeDB.saveUser(user);
-   
-      
-   }
-
-   //STORE USERID IN SESSION
-   req.session.userId = req.session.profiles.id;
-   console.log("___USERID____" + req.session.userId);
-
-   app.pipeDB.hasChums(req.session.userId, function(chum){
+   app.pipeDB.hasChums(req.session.profiles.id, function(chum){
 
       if(chum){
       //Chums already loaded for user
 
          //LOAD NEXT CHUM
-         app.pipeDB.getNextChum(req.session.userId, function(chum){
+         app.pipeDB.getNextChum(req.session.profiles.id, function(chum){
 
             if(!chum){
             //Already curated all Chums
@@ -143,7 +275,7 @@ app.get('/connect', function (req, res) {
    app.pipeDB.getChumById(req.query["id"], function(chum){
       console.log("___GOT CHUM___" + JSON.stringify(chum));
 
-      app.pipeDB.updateChum(chum, { surfaced : true });
+      //app.pipeDB.updateChum(chum, { surfaced : true });
 
       //RETURN CONNECTION OPTIONS
       res.render('connect', {
@@ -159,33 +291,23 @@ app.get('/connect', function (req, res) {
 app.post('/connect', function(req, res) {
    if (!req.session.access_token) return res.redirect('/auth');
 
-   //console.log("ID----" + req.body.chumId);
+   //console.log(req.body);
 
-   //SAVE CONNECT TO DB
+   //Populate connect record
    var connect = new app.pipeDB.Connect();
+   connect.chumId = req.body.chumId;
    connect.profileIdr = req.body.profileIdr;
    connect.profileUserId = req.body.profileUserId;
    connect.subject = req.body.subject;
-   connect.message = req.body.body;
+   connect.message = req.body.body;   
 
-   //console.log(req);
-
-   console.log("ProfileIDR: " + connect.profileIdr );
-   console.log("UserId: " + connect.profileUserId );
-   console.log("Subject: " + connect.subject );
-   console.log("body: " + connect.body );
-
-
-   app.pipeDB.addConnect(connect, function(err){
-
-      if(err)
-         console.log("ERROR SAVING CONNECT__" + err);
-
-   });
+   var sType = "" 
+      , sMessage = ""
+      , sDetails = "";
 
    //CHECK SEND METHOD
-
    if(connect.profileIdr.indexOf("gcontacts") != -1){
+   //GCONTACTS - SEND EMAIL
       console.log("SENDING EMAIL");
 
       //Get email from idr
@@ -193,27 +315,32 @@ app.post('/connect', function(req, res) {
 
       console.log("TO: " + email);
 
-      var SendGrid = require('sendgrid-nodejs').SendGrid;
-      var sendgrid = new SendGrid("auggernaut", "P@lmtr33");
       sendgrid.send({
          to: 'augman@gmail.com',
+         //connect.profileUserId
          from: 'augustin@datacosmos.com',
+         //unescape(req.session.profiles["gcontacts"])
          subject: connect.subject,
          text: connect.message
-      }, function(success, message) {
+      }, function(success, details) {
          if (!success) {
-            console.log(message);
-            req.flash("error", "Error sending email!");
-         } else 
-            req.flash("info", "Email message sent!");
-            
-         res.redirect('/pipe');
-         
-      });
+            sType = "error";
+            sMessage = "Error sending email!";
+         } else {
+            sType = "info";
+            sMessage = "Email successfully sent!";
+         }
+         sDetails = success + " -- " + details;
 
+         buildConnect(connect, sType, sMessage, sDetails);
+
+         req.flash(sType, sMessage);
+         res.redirect('/pipe');
+      });
 
    }
    else if(connect.profileIdr.indexOf("linkedin") != -1){
+   //LINKEDIN - SEND MESSAGE THROUGH PROXY
       console.log("SENDING LINKEDIN MESSAGE");
 
       app.singly.apiCallPost('/proxy/linkedin/people/~/mailbox', req.session, {
@@ -222,6 +349,8 @@ app.post('/connect', function(req, res) {
                      {
                         "person": {
                            "_path": "/people/" + connect.profileUserId,
+                           //+ "asdac@#$@12efdca",
+                           //connect.profileUserId,
                         }
                      }
                   ]
@@ -229,34 +358,60 @@ app.post('/connect', function(req, res) {
                "subject": connect.subject,
                "body": connect.message
             }, 
-            function(err, response){   
-               if(response){
-                  console.log("ERROR - Send via LinkedIn: -err-" + err + " -json-" + JSON.stringify(response));
-                  req.flash("error", "Error sending linkedin message!");   
-               }else
-                  req.flash("info", "LinkedIn message sent!");
-               
+            function(err, json){   
+               console.log("ERR" + err + " JSON " + JSON.stringify(json));
+               if(json){
+                  sType = "error";
+                  sMessage = "Error sending LinkedIn message!";  
+               } else {
+                  sType = "info";
+                  sMessage = "LinkedIn message sent!";
+               }
+               sDetails = err + " -- " + JSON.stringify(json);
+
+               buildConnect(connect, sType, sMessage, sDetails);
+
+               req.flash(sType, sMessage);
                res.redirect('/pipe');
             }
          );
    }
    else if(connect.profileIdr.indexOf("twitter") != -1){
+   //TWITTER - SEND MESSAGE THROUGH PROXY
       console.log("SENDING TWITTER MESSAGE");
 
       app.singly.apiCallPost('/proxy/twitter/direct_messages/new.json', req.session, {
                "screen_name": connect.profileUserId,
                "text": connect.message
             }, 
-            function(err, response){   
-               if(response){
-                  console.log("ERROR - Send via Twitter: -err-" + err + " -json-" + JSON.stringify(response));
-                  req.flash("error", "Error sending twitter message!");
-               }else
-                  req.flash("info", "Twitter message sent!");
-               
+            function(err, json){   
+               if(json){
+                  sType = "error";
+                  sMessage = "Error sending Twitter message!";  
+               } else {
+                  sType = "info";
+                  sMessage = "Twitter message sent!";
+               }
+               sDetails = err + " -- " + JSON.stringify(json);
+
+               buildConnect(connect, sType, sMessage, sDetails);
+
+               req.flash(sType, sMessage);
                res.redirect('/pipe');
+
             }
          );
+   }
+   else {
+   //NONE OF THE ABOVE - IDR CORRUPT
+      sType = "error";
+      sMessage = "An unexpected error occurred."
+      sDetails = "twitter, gcontacts, or linkedin not in idr";
+
+      buildConnect(connect, sType, sMessage, sDetails);
+
+      req.flash(sType, sMessage);
+      res.redirect('/pipe');
    }
 
 });
@@ -272,8 +427,6 @@ app.get('/skip', function (req, res) {
    //GET CONNECTED PROFILES FROM DB
    app.pipeDB.getChumById(req.query["id"], function(chum){
       console.log("___GOT CHUM___" + JSON.stringify(chum));
-
-      app.pipeDB.updateChum(chum, { surfaced : true });
 
       //RETURN CONNECTION OPTIONS
       res.render('skip', {
@@ -307,12 +460,14 @@ app.post('/skip', function(req, res) {
 
 
    app.pipeDB.addSkip(skip, function(err){   
-         if(err)
-            req.flash("error", "Error saving skip preference!");
-         else
-            req.flash("info", "Skip preference saved.");
-
-         res.redirect('/pipe');
+      if(err)
+         req.flash("error", "Error saving skip preference!");
+      else {
+         req.flash("info", "Skip preference saved.");
+         app.pipeDB.updateChum(skip.chumId, { surfaced : true });
+      }
+      
+      res.redirect('/pipe');
    });
 
 });
@@ -327,9 +482,9 @@ app.get('/user', function (req, res) {
    //RETURN USER
    var users = {};
 
-   res.render('user', {
+   res.render('splash', {
          session: req.session,
-         accounts: accounts
+         //accounts: accounts
       });
 
    
@@ -347,6 +502,71 @@ app.get('/thank-you', function (req, res) {
       });
 
 });
+
+
+//*************************************
+//SEND NOTIFICATIONS
+//*************************************
+app.get('/notify', function (req, res) {
+
+
+   if(req.query["id"] == app.notifySecret){
+
+      app.pipeDB.getSubscribedUsers(function(subscribers){
+         console.log("SUBSCRIBERS:" + JSON.stringify(subscribers));
+
+         for(var sub in subscribers){
+
+            app.pipeDB.getNextChum(subscribers[sub].sId, function(chum){
+
+               if(chum){
+
+                   emailTemplates(templateDir, function(err, templates) {
+                    
+                     templates('simple-basic', chum, function(err, html, text) {
+
+                        console.log("ERR" + err);
+                        console.log("HTML" + html);
+                        console.log("TEXT" + text);
+                        
+                        sendgrid.send({
+                           to: subscribers[sub].email,
+                           //connect.profileUserId
+                           from: 'augustin@datacosmos.com',
+                           //unescape(req.session.profiles["gcontacts"])
+                           subject: "Your daily person from Pipe",
+                           html: html
+                           }, function(success, details) {
+
+                              if (!success) {
+                                 sType = "error";
+                                 sMessage = "Error sending email!";
+                              } else {
+                                 sType = "info";
+                                 sMessage = "Email successfully sent!";
+                              }
+                              sDetails = success + " -- " + details;
+
+                              console.log("Email - " + sType + " - " + sMessage + " - " + sDetails);
+                           }
+                        );
+
+                     });
+
+                  });
+
+               }
+            });
+         }      
+      });
+   }
+   else{}
+   //BAD REQUEST
+
+   res.redirect('/');
+});
+
+
 
 
 //*************************************
@@ -427,10 +647,9 @@ function processContacts(session, callback){
 
 
    //GET 100 names from Contacts
-   app.singly.apiCall('/types/contacts', {min_count: 100, map: true, fields: "map.oembed.title", access_token: session.access_token}, function(err, names){
+   app.singly.apiCall('/types/contacts', {max_count: 20, map: true, fields: "map.oembed.title", access_token: session.access_token}, function(err, names){
 
       var count = 0;
-      var newChum;
 
       //GO THROUGH ALL RETURNED CONTACTS
       for(var name in names){
@@ -442,8 +661,8 @@ function processContacts(session, callback){
          //FIND RELATED CONTACTS (by name)
          app.singly.apiCall('/types/contacts', {q: fullname, map: true, access_token: session.access_token}, function(err, contacts){
 
-            newChum = new app.pipeDB.Chum();
-            newChum.userId = session.userId;
+            var newChum = new app.pipeDB.Chum();
+            newChum.userId = session.profiles.id;
             console.log("__NEW CONTACT__" + newChum._id);
 
             //MERGE CONTACTS INTO CHUM
@@ -452,7 +671,6 @@ function processContacts(session, callback){
                newChum = mergeContactIntoChum(contacts[contact], newChum);
                console.log("___newChum____" + JSON.stringify(newChum));
             }
-
 
             //ONLY SAVE CHUM IF IT DOESN'T ALREADY EXIST IN DB
             app.pipeDB.getChumByName(newChum.name, function(chum){
@@ -480,6 +698,26 @@ function processContacts(session, callback){
       }//For each contact
 
    });//singly.apiCall -> get contacts
+
+}
+
+function buildConnect(connect, sType, sMessage, sDetails){
+
+   var status = new app.pipeDB.Status();
+   status.type = sType;
+   status.message = sMessage;
+   status.details = sDetails;
+   connect.statuses.push(status);                
+   
+   app.pipeDB.addConnect(connect, function(err){
+      if(err)
+         console.log("ERROR SAVING CONNECT__" + err);
+   });
+
+   if(sType == "error")
+      console.log("ERROR SENDING MESSAGE-- " + sMessage + " -DETAILS- " + sDetails);  
+   else
+      app.pipeDB.updateChum(connect.chumId, { surfaced : true });
 
 }
 

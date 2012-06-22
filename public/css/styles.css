@@ -310,7 +310,7 @@
 
   body.firstLogin div.container{
     background:transparent;
-    min-height:630px;
+    /*min-height:630px;*/
   }
 
   body.firstLogin div.container p {
@@ -352,6 +352,8 @@
   }
 
   a, a:hover {text-decoration:none;}
+
+  h2 {font-size: 32px;}
 
   h1#name {font-size:45px; padding-bottom:40px; padding-top:18px;}
 

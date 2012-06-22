@@ -1,18 +1,44 @@
+   <script type="text/javascript">
+      $(document).ready(function(){
 
-    <div class="container">
-       	<div id="logo"></div>
-       	
-		  <p style="padding-bottom:15px;">Connect to your services:</p>
-		  <p>	
-		  	<div id="authOptions">	
-		  	<% for (var i = 0; i < services.length; i++) { %>
-	 			<%- services[i].link %>
-			<% } %>
-		  	</div>
-		  </p>
-		  <p style="padding-bottom:15px;">Every day we'll notify you of the one contact you should reach out to.</p>
-		  <a href="/pipe" class="btn btn-large btn-success" onclick="mixpanel.track('auth-continue');" style="font-size:18px; margin-bottom:30px">Ok, I'm done! &nbsp;&nbsp;<i class="icon-share-alt icon-white"></i></a>
-    </div>
+         $('#sendEmail').attr('checked', true);
+
+         $('#sendEmail').click(function () {
+            $("#txtEmail").toggle(this.checked);
+         });
+
+
+        $("#okready").click(function(){
+           $("#subscription").submit();
+        });
+
+      });
+   </script>
+
+   <div class="container">
+      <div id="logo"></div>
+
+      <p style="padding-bottom:15px;">Connect to your services:</p>
+      <p>	
+      <div id="authOptions">	
+         <% for (var i = 0; i < services.length; i++) { %>
+         <%- services[i].link %>
+         <% } %>
+      </div>
+      </p>
+
+      <p style="padding-bottom:15px;">Set your notification preferences:</p>
+      <div>
+         <FORM id="subscription" action="/auth" method="post">
+            <input type="checkbox" name="sendEmail" id="sendEmail" style="margin-right:10px;" value="daily"/>Yes, email me one person a day.<br/>
+
+            <p><input type="text" maxlength="150" name="email" class="defaultText" id="txtEmail" title="<%= email %>" checked="checked"/></p>
+      
+            <p><a class="btn btn-large btn-success" onclick="mixpanel.track('auth-continue');" style="font-size:18px; margin-bottom:30px" id="okready">Ok, I'm done! &nbsp;&nbsp;<i class="icon-share-alt icon-white"></i></a>
+            </p>
+         </FORM>
+      </div>
+   </div>
     
     <!-- Le Footer javascript 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>

@@ -48,26 +48,6 @@ $(document).ready(function(){
 	});
 <% } %><% } %>
 
-	$(".defaultText").focus(function(srcc)
-    {
-        if ($(this).val() == $(this)[0].title)
-        {
-            $(this).removeClass("defaultTextActive");
-            $(this).val("");
-        }
-    });
-    
-    $(".defaultText").blur(function()
-    {
-        if ($(this).val() == "")
-        {
-            $(this).addClass("defaultTextActive");
-            $(this).val($(this)[0].title);
-        }
-    });
-    
-    $(".defaultText").blur(); 
-
 });
 </script>
 
@@ -102,7 +82,7 @@ $(document).ready(function(){
 		<div style="clear:both"></div>
 
 		<form id="connect" action="/connect" method="post">
-			<input type="hidden" name="chumId" id="<%=chum._id%>" />
+			<input type="hidden" name="chumId" id="chumId" value="<%=chum._id%>" />
 			<input type="hidden" name="profileIdr" id="profileIdr"/>
 			<input type="hidden" name="profileUserId" id="profileUserId"/>
 			<div class="hide" id="subject">

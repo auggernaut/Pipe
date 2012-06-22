@@ -1,0 +1,26 @@
+
+   <%= name %>
+
+   <% for(var i = 0; i<photos.length; i++) { %>
+
+   <% if(photos[i].link){ %>
+   <div>
+   <% if(photos[i].url){ %>
+   <%= photos[i].link %>
+   <%= photos[i].url %>
+   <% }else{ %>
+   <%= photos[i].link %>
+   http://pipeapp.co/img/social_networks/<%= photos[i].type %>_missing.png
+   <% } %>
+   </div>
+   <% } %>
+
+   <% } %>
+   <%= name %>
+   <%= meta %>
+   <%= profession %>
+   <%= location %>
+   http://pipeapp.co/connect?id=<%= _id %>
+   http://pipeapp.co/skip?id=<%= _id %>
+
+   http://pipeapp.co/auth

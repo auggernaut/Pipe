@@ -1,17 +1,25 @@
 {
-   "name": "pipe",
-   "version": "0.0.1",
-   "dependencies": {
-      "ejs": "*",
-      "express": "*",
-      "oauth": "*",
-      "querystring": "*",
-      "request": "*",
-      "sprintf": "*",
-      "mongodb": "*",
-      "mongoose": "*"
-   },
-   "engines": {
-     "node": "0.6.x"
-   }
+  "name": "pipe",
+  "version": "0.0.1-4",
+  "dependencies": {
+    "ejs": "*",
+    "express": "*",
+    "oauth": "*",
+    "querystring": "*",
+    "request": "*",
+    "sprintf": "*",
+    "mongodb": "*",
+    "mongoose": "*",
+    "cookies": "0.3.x",
+    "sendgrid-nodejs": "*",
+    "email-templates": "0.0.x",
+    "express-messages": "*"
+  },
+  "engines": {
+    "node": "0.6.x"
+  },
+  "subdomain": "pipe",
+  "scripts": {
+    "start": "app.js"
+  }
 }

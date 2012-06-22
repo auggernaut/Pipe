@@ -3,28 +3,9 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-    $(".defaultText").focus(function(srcc)
-    {
-        if ($(this).val() == $(this)[0].title)
-        {
-            $(this).removeClass("defaultTextActive");
-            $(this).val("");
-        }
-    });
-    
-    $(".defaultText").blur(function()
-    {
-        if ($(this).val() == "")
-        {
-            $(this).addClass("defaultTextActive");
-            $(this).val($(this)[0].title);
-        }
-    });
-    
-    $(".defaultText").blur(); 
 
-    if($('input[name=howOften]:checked', '#connect').val() == "every")
-        alert("every");
+    //if($('input[name=howOften]:checked', '#connect').val() == "every")
+    //    alert("every");
     
     $("#everyOptions").attr("disabled", true);
 
@@ -37,11 +18,8 @@ $(document).ready(function(){
     $('#howoften_random').click(function() {
         $("#everyOptions").attr("disabled", true);
     });
-    //$('.defaultText').val($('input[name=howoften]:checked', '#connect').val());
-
 
 });
-        //
 
 </script>
 

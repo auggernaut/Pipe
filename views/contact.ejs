@@ -1,0 +1,30 @@
+
+<script type="text/javascript">
+$(document).ready(function(){
+   $('#messages').slideDown(300).delay(800).fadeIn(400).delay(1000).slideUp(300);
+});
+</script>
+
+
+<div class="container">
+   <a href="/pipe"><div id="logo"></div></a>
+
+   <%- messages() %>
+   
+   <h2>Contact Us</h2>
+
+   <p>We'd love to hear from you!</p>
+   
+   <FORM id="connect" action="/contact" method="post">
+
+      <p>
+         <input type="text" maxlength="150" name="email" class="defaultText" id="txtEmail" title="your email" checked="checked"/>
+<br/>
+          <textarea name="message" class="defaultText" title="Enter a message..."></textarea>
+      </p>
+
+      <input type="image" src="img/send_btn_small.png" value="Submit" alt="submit" onclick="mixpanel.track('contact-submit');"/>
+
+   </FORM>
+</div>
+    
